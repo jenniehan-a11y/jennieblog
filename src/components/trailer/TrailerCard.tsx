@@ -13,82 +13,74 @@ interface TrailerCardProps {
 
 export default function TrailerCard({ trailer, onPlay, onToggleFavorite }: TrailerCardProps) {
   const country = getCountryInfo(trailer.country);
-  const typeLabel = CONTENT_TYPE_LABELS[trailer.contentType] || trailer.contentType;
+  const typeLabel = CONTENT_TYPE_LABELS[trailer.contentType] || '';
 
   return (
-    <div className="group relative animate-fade-up">
-      {/* 카드 */}
+    <div className="group fade-in">
       <div
-        className="relative aspect-[16/9] rounded-xl overflow-hidden cursor-pointer card-glow transition-all duration-500 bg-[#141414]"
+        className="relative aspect-video rounded-xl overflow-hidden cursor-pointer bg-[#111] ring-1 ring-white/[0.04] hover:ring-white/[0.08] transition-all duration-500"
         onClick={() => onPlay(trailer)}
       >
         <Image
           src={trailer.thumbnailUrl}
           alt={trailer.title}
           fill
-          className="object-cover transition-all duration-700 ease-out group-hover:scale-[1.08]"
+          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
 
-        {/* 항상 보이는 하단 그라데이션 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent" />
+        {/* 상시 하단 그라데이션 */}
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-        {/* 호버 시 전체 오버레이 */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500" />
+        {/* 호버 오버레이 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* 재생 버튼 - 호버 시 */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100 shadow-xl">
-            <svg className="w-5 h-5 text-[#0a0a0a] ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+        {/* 재생 */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400">
+          <div className="w-[52px] h-[52px] rounded-full backdrop-blur-xl bg-white/15 border border-white/20 flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-400 shadow-2xl">
+            <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
         </div>
 
-        {/* 좌상단 뱃지 */}
-        <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-          {trailer.platform && (
-            <span className="px-2 py-0.5 bg-white/10 backdrop-blur-xl rounded-md text-[10px] text-white/90 font-medium border border-white/[0.08]">
-              {trailer.platform}
-            </span>
-          )}
-        </div>
+        {/* 뱃지: 플랫폼 */}
+        {trailer.platform && (
+          <div className="absolute top-3 left-3 px-2 py-[3px] rounded-md bg-black/50 backdrop-blur-md border border-white/[0.06] text-[10px] text-white/80 font-medium">
+            {trailer.platform}
+          </div>
+        )}
 
-        {/* 우상단 즐겨찾기 */}
+        {/* 즐겨찾기 */}
         {onToggleFavorite && (
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite(trailer.id);
-            }}
-            className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 ${
+            onClick={(e) => { e.stopPropagation(); onToggleFavorite(trailer.id); }}
+            className={`absolute top-3 right-3 w-7 h-7 rounded-full backdrop-blur-md border flex items-center justify-center transition-all duration-300 ${
               trailer.isFavorite
-                ? 'bg-amber-500/20 backdrop-blur-xl border border-amber-500/30'
-                : 'bg-white/5 backdrop-blur-xl opacity-0 group-hover:opacity-100 border border-white/[0.08]'
-            }`}
-            aria-label="즐겨찾기"
-          >
-            <span className="text-[10px]">{trailer.isFavorite ? '⭐' : '☆'}</span>
+                ? 'bg-amber-500/20 border-amber-400/30 opacity-100'
+                : 'bg-black/30 border-white/[0.06] opacity-0 group-hover:opacity-100'
+            }`}>
+            <span className="text-[11px]">{trailer.isFavorite ? '★' : '☆'}</span>
           </button>
         )}
 
-        {/* 하단 정보 - 항상 보임 */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h3 className="text-white font-semibold text-[13px] leading-snug line-clamp-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+        {/* 하단 정보 */}
+        <div className="absolute bottom-0 inset-x-0 p-3.5">
+          <h3 className="text-white font-semibold text-[13px] leading-[1.3] line-clamp-1 tracking-[-0.01em]">
             {trailer.title}
           </h3>
-          <div className="flex items-center gap-1 mt-1 text-[11px] text-white/50">
+          <p className="text-white/40 text-[11px] mt-1 flex items-center gap-1">
             <span>{country.flag}</span>
             <span>{typeLabel}</span>
-            <span className="text-white/20">·</span>
+            <span className="text-white/15">·</span>
             <span>{trailer.year}</span>
             {trailer.genres[0] && (
               <>
-                <span className="text-white/20">·</span>
+                <span className="text-white/15">·</span>
                 <span>{trailer.genres[0]}</span>
               </>
             )}
-          </div>
+          </p>
         </div>
       </div>
     </div>

@@ -10,62 +10,47 @@ interface TrailerGridProps {
   onToggleFavorite?: (id: string) => void;
 }
 
-const ITEMS_PER_PAGE = 24;
-
 export default function TrailerGrid({ trailers, onToggleFavorite }: TrailerGridProps) {
-  const [selectedTrailer, setSelectedTrailer] = useState<Trailer | null>(null);
-  const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Trailer | null>(null);
+  const [count, setCount] = useState(24);
 
-  const totalPages = Math.ceil(trailers.length / ITEMS_PER_PAGE);
-  const paginatedTrailers = trailers.slice(0, page * ITEMS_PER_PAGE);
+  const visible = trailers.slice(0, count);
+  const hasMore = count < trailers.length;
 
   if (trailers.length === 0) {
     return (
-      <div className="text-center py-32">
-        <div className="w-16 h-16 rounded-2xl bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
-          <svg className="w-7 h-7 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      <div className="flex flex-col items-center justify-center py-32 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-white/[0.02] border border-white/[0.04] flex items-center justify-center mb-5">
+          <svg className="w-6 h-6 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
           </svg>
         </div>
-        <p className="text-white/30 text-[15px] font-medium">결과 없음</p>
-        <p className="text-white/15 text-[13px] mt-1">필터를 조정해보세요</p>
+        <p className="text-white/25 text-sm font-medium">결과가 없어요</p>
+        <p className="text-white/10 text-xs mt-1">다른 필터를 선택해보세요</p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-        {paginatedTrailers.map((trailer) => (
-          <TrailerCard
-            key={trailer.id}
-            trailer={trailer}
-            onPlay={setSelectedTrailer}
-            onToggleFavorite={onToggleFavorite}
-          />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+        {visible.map((t, i) => (
+          <div key={t.id} style={{ animationDelay: `${Math.min(i * 30, 300)}ms` }}>
+            <TrailerCard trailer={t} onPlay={setSelected} onToggleFavorite={onToggleFavorite} />
+          </div>
         ))}
       </div>
 
-      {page < totalPages && (
-        <div className="text-center mt-14">
-          <button
-            onClick={() => setPage((p) => p + 1)}
-            className="group px-8 py-2.5 text-[13px] font-medium text-white/40 hover:text-white/70 rounded-xl border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.03] transition-all duration-200"
-          >
-            더 보기
-            <span className="text-white/15 ml-2 group-hover:text-white/30 transition-colors">
-              +{trailers.length - paginatedTrailers.length}
-            </span>
+      {hasMore && (
+        <div className="flex justify-center mt-12">
+          <button onClick={() => setCount(c => c + 24)}
+            className="px-6 py-2.5 text-[12px] font-medium text-white/25 hover:text-white/50 rounded-full border border-white/[0.04] hover:border-white/[0.08] hover:bg-white/[0.02] transition-all">
+            더 보기 · {trailers.length - count}개 남음
           </button>
         </div>
       )}
 
-      {selectedTrailer && (
-        <TrailerModal
-          trailer={selectedTrailer}
-          onClose={() => setSelectedTrailer(null)}
-        />
-      )}
+      {selected && <TrailerModal trailer={selected} onClose={() => setSelected(null)} />}
     </>
   );
 }

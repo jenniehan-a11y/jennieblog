@@ -27,7 +27,10 @@
       "Bash(python3 -m json.tool)",
       "WebFetch(domain:tv.apple.com)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(gh repo:*)",
+      "Bash(npm i:*)",
+      "Bash(vercel:*)"
     ]
   }
 }
