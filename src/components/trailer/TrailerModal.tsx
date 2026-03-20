@@ -14,7 +14,6 @@ interface TrailerModalProps {
 export default function TrailerModal({ trailer, onClose }: TrailerModalProps) {
   const country = getCountryInfo(trailer.country);
 
-  // ESC 키로 닫기
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -29,64 +28,55 @@ export default function TrailerModal({ trailer, onClose }: TrailerModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm animate-fade-up"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-5xl mx-4 max-h-[95vh] overflow-y-auto"
+        className="w-full max-w-5xl mx-6 max-h-[95vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 닫기 */}
-        <div className="flex justify-end mb-3">
+        <div className="flex justify-end mb-4">
           <button
             onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-[#1c1c1e] hover:bg-[#2c2c2e] transition-colors"
-            aria-label="닫기"
+            className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.1] flex items-center justify-center transition-colors border border-white/[0.06]"
           >
-            <svg className="w-4 h-4 text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* 영상 */}
-        <div className="rounded-2xl overflow-hidden">
+        <div className="rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
           <YouTubePlayer youtubeId={trailer.youtubeId} autoplay />
         </div>
 
         {/* 정보 */}
         <div className="mt-6 space-y-4">
-          <div>
-            <h2 className="text-[#f5f5f7] text-2xl font-bold tracking-tight">{trailer.title}</h2>
-            {trailer.titleOriginal !== trailer.title && (
-              <p className="text-[#86868b] text-sm mt-1">{trailer.titleOriginal}</p>
-            )}
-          </div>
+          <h2 className="text-white text-2xl font-bold tracking-tight">{trailer.title}</h2>
+          {trailer.titleOriginal !== trailer.title && (
+            <p className="text-white/30 text-sm -mt-2">{trailer.titleOriginal}</p>
+          )}
 
           <div className="flex flex-wrap gap-2">
-            <span className="px-3 py-1.5 bg-[#1c1c1e] text-[#f5f5f7] text-sm rounded-full">
-              {country.flag} {country.name}
-            </span>
-            <span className="px-3 py-1.5 bg-[#1c1c1e] text-[#f5f5f7] text-sm rounded-full">
-              {CONTENT_TYPE_LABELS[trailer.contentType]}
-            </span>
-            <span className="px-3 py-1.5 bg-[#1c1c1e] text-[#f5f5f7] text-sm rounded-full">
-              {trailer.year}
-            </span>
-            {trailer.platform && (
-              <span className="px-3 py-1.5 bg-[#1c1c1e] text-[#f5f5f7] text-sm rounded-full">
-                {trailer.platform}
+            {[
+              `${country.flag} ${country.name}`,
+              CONTENT_TYPE_LABELS[trailer.contentType],
+              String(trailer.year),
+              trailer.platform,
+              `${TRAILER_TYPE_LABELS[trailer.trailerType] || trailer.trailerType} 예고편`,
+            ].filter(Boolean).map((tag, i) => (
+              <span key={i} className="px-3 py-1 bg-white/[0.04] text-white/60 text-[13px] rounded-lg border border-white/[0.04]">
+                {tag}
               </span>
-            )}
-            <span className="px-3 py-1.5 bg-[#1c1c1e] text-[#86868b] text-sm rounded-full">
-              {TRAILER_TYPE_LABELS[trailer.trailerType] || trailer.trailerType} 예고편
-            </span>
+            ))}
           </div>
 
           {trailer.genres.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {trailer.genres.map((genre) => (
-                <span key={genre} className="px-3 py-1 text-[#86868b] text-xs border border-[#38383a] rounded-full">
+                <span key={genre} className="px-2.5 py-0.5 text-white/25 text-[12px] rounded-md border border-white/[0.06]">
                   {genre}
                 </span>
               ))}

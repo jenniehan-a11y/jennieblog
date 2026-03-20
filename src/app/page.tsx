@@ -13,7 +13,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-24 pb-16">
+    <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-8 pb-16">
       {trailers.length === 0 ? (
         <div className="text-center py-32">
           <h1 className="text-3xl font-bold text-[#f5f5f7] mb-4">🎬 Jennie Trailer</h1>

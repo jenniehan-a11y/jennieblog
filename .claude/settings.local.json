@@ -21,7 +21,13 @@
       "WebFetch(domain:developers.google.com)",
       "WebFetch(domain:www.rawg.io)",
       "WebFetch(domain:vercel.com)",
-      "Bash(npx:*)"
+      "Bash(npx:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s \"https://api.themoviedb.org/3/search/movie?api_key=3a647e92f2b71b4bd774bfdfbdb509c1&language=ko-KR&query=살목지\")",
+      "Bash(python3 -m json.tool)",
+      "WebFetch(domain:tv.apple.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

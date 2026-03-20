@@ -15,15 +15,15 @@ const tabs: { value: Region | 'all'; label: string }[] = [
 
 export default function FilterTabs({ value, onChange }: FilterTabsProps) {
   return (
-    <div className="flex gap-1">
+    <div className="inline-flex bg-white/[0.04] rounded-xl p-1">
       {tabs.map((tab) => (
         <button
           key={tab.value}
           onClick={() => onChange(tab.value)}
-          className={`px-5 py-2 text-[13px] font-medium rounded-full transition-all duration-200 ${
+          className={`relative px-5 py-1.5 text-[13px] font-medium rounded-[10px] transition-all duration-200 ${
             value === tab.value
-              ? 'bg-[#f5f5f7] text-black'
-              : 'text-[#86868b] hover:text-[#f5f5f7] hover:bg-[#1c1c1e]'
+              ? 'bg-white text-[#0a0a0a] shadow-sm'
+              : 'text-white/40 hover:text-white/70'
           }`}
         >
           {tab.label}

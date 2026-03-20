@@ -22,8 +22,8 @@ export default function FilterChips({
   };
 
   return (
-    <div className="space-y-2">
-      <span className="text-[#86868b] text-[11px] font-semibold tracking-widest uppercase">{label}</span>
+    <div className="space-y-2.5">
+      <span className="text-white/25 text-[11px] font-semibold tracking-[0.15em] uppercase">{label}</span>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => {
           const isSelected = selected.includes(option);
@@ -31,10 +31,10 @@ export default function FilterChips({
             <button
               key={option}
               onClick={() => toggle(option)}
-              className={`px-3.5 py-1.5 text-[12px] rounded-full transition-all duration-200 ${
+              className={`px-3 py-1.5 text-[12px] font-medium rounded-lg transition-all duration-200 ${
                 isSelected
-                  ? 'bg-[#f5f5f7] text-black font-medium'
-                  : 'text-[#86868b] hover:text-[#f5f5f7] border border-[#38383a] hover:border-[#636366]'
+                  ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 shadow-sm shadow-indigo-500/10'
+                  : 'text-white/35 hover:text-white/60 border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.03]'
               }`}
             >
               {option}

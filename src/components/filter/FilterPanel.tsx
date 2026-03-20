@@ -6,7 +6,6 @@ import { FILTER_GENRES } from '@/lib/data/genres';
 import { PLATFORMS } from '@/lib/data/tags';
 import { ContentType } from '@/types/trailer';
 import FilterChips from './FilterChips';
-import FilterTabs from './FilterTabs';
 import SortSelect from './SortSelect';
 
 interface FilterPanelProps {
@@ -16,6 +15,12 @@ interface FilterPanelProps {
   onSortChange: (sort: SortOption) => void;
   resultCount: number;
 }
+
+const regionOptions = [
+  { value: 'all' as const, label: '전체' },
+  { value: 'domestic' as const, label: '국내' },
+  { value: 'international' as const, label: '해외' },
+];
 
 const contentTypes: { value: ContentType; label: string }[] = [
   { value: 'movie', label: '영화' },
@@ -30,7 +35,7 @@ export default function FilterPanel({
   onSortChange,
   resultCount,
 }: FilterPanelProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   const update = (partial: Partial<FilterState>) => {
     onFiltersChange({ ...filters, ...partial });
@@ -45,7 +50,7 @@ export default function FilterPanel({
     }
   };
 
-  const activeFilterCount =
+  const activeCount =
     filters.contentType.length +
     (filters.region !== 'all' ? 1 : 0) +
     filters.genres.length +
@@ -68,92 +73,108 @@ export default function FilterPanel({
   };
 
   return (
-    <div className="space-y-5">
-      {/* 1행: 지역 탭 + 검색 + 필터 토글 */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-        <div className="flex items-center gap-3">
-          <FilterTabs value={filters.region} onChange={(region) => update({ region })} />
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className={`px-4 py-2 text-[13px] font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 ${
-              expanded || activeFilterCount > 0
-                ? 'bg-[#f5f5f7] text-black'
-                : 'text-[#86868b] hover:text-[#f5f5f7] border border-[#38383a] hover:border-[#636366]'
-            }`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-            </svg>
-            필터
-            {activeFilterCount > 0 && (
-              <span className="bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+    <div className="space-y-3">
+      {/* 1행: 지역 + 콘텐츠 유형 */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* 지역 탭 */}
+        <div className="inline-flex bg-white/[0.04] rounded-xl p-1">
+          {regionOptions.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => update({ region: tab.value })}
+              className={`px-4 py-1.5 text-[12px] font-medium rounded-[10px] transition-all duration-200 ${
+                filters.region === tab.value
+                  ? 'bg-white text-[#0a0a0a] shadow-sm'
+                  : 'text-white/40 hover:text-white/70'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <input
-            type="text"
-            placeholder="검색..."
-            value={filters.searchQuery}
-            onChange={(e) => update({ searchQuery: e.target.value })}
-            className="bg-[#1c1c1e] text-[#f5f5f7] text-[13px] rounded-full px-4 py-2.5 border border-[#38383a] focus:outline-none focus:border-[#636366] w-48 placeholder-[#636366] transition-colors"
-          />
-          <SortSelect value={sort} onChange={onSortChange} />
-        </div>
-      </div>
+        <div className="h-4 w-px bg-white/[0.06] mx-1" />
 
-      {/* 2행: 콘텐츠 유형 + 즐겨찾기 (항상 보임) */}
-      <div className="flex items-center gap-2">
+        {/* 콘텐츠 유형 */}
         {contentTypes.map(({ value, label }) => (
           <button
             key={value}
             onClick={() => toggleContentType(value)}
-            className={`px-4 py-2 text-[13px] rounded-full transition-all duration-200 ${
+            className={`px-3.5 py-1.5 text-[12px] font-medium rounded-lg transition-all duration-200 ${
               filters.contentType.includes(value)
-                ? 'bg-[#f5f5f7] text-black font-medium'
-                : 'text-[#86868b] hover:text-[#f5f5f7] border border-[#38383a] hover:border-[#636366]'
+                ? 'bg-white text-[#0a0a0a]'
+                : 'text-white/35 hover:text-white/60 border border-white/[0.06] hover:border-white/[0.12]'
             }`}
           >
             {label}
           </button>
         ))}
 
-        <div className="w-px h-5 bg-[#38383a] mx-1" />
+        <div className="h-4 w-px bg-white/[0.06] mx-1" />
 
+        {/* 즐겨찾기 */}
         <button
           onClick={() => update({ isFavorite: filters.isFavorite ? null : true })}
-          className={`px-4 py-2 text-[13px] rounded-full transition-all duration-200 ${
+          className={`px-3.5 py-1.5 text-[12px] font-medium rounded-lg transition-all duration-200 ${
             filters.isFavorite
-              ? 'bg-amber-500/20 text-amber-400 font-medium border border-amber-500/30'
-              : 'text-[#86868b] hover:text-[#f5f5f7] border border-[#38383a] hover:border-[#636366]'
+              ? 'bg-amber-500/15 text-amber-300 border border-amber-500/20'
+              : 'text-white/35 hover:text-white/60 border border-white/[0.06] hover:border-white/[0.12]'
           }`}
         >
           ⭐ 즐겨찾기
         </button>
 
-        {activeFilterCount > 0 && (
-          <>
-            <div className="w-px h-5 bg-[#38383a] mx-1" />
-            <button
-              onClick={resetFilters}
-              className="text-[#636366] hover:text-[#f5f5f7] text-[12px] transition-colors"
-            >
-              초기화
-            </button>
-          </>
+        {activeCount > 0 && (
+          <button onClick={resetFilters} className="text-white/20 hover:text-white/50 text-[11px] transition-colors">
+            초기화
+          </button>
         )}
-
-        <span className="ml-auto text-[#48484a] text-[12px] tabular-nums">
-          {resultCount}개
-        </span>
       </div>
 
-      {/* 확장 필터 (토글) */}
-      {expanded && (
-        <div className="space-y-5 pt-3 border-t border-[#1c1c1e] animate-in fade-in duration-200">
+      {/* 2행: 필터 토글 + 검색 + 정렬 + 개수 */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 text-[12px] font-medium rounded-lg transition-all duration-200 ${
+            showFilters || filters.genres.length > 0 || filters.platform.length > 0
+              ? 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/20'
+              : 'text-white/35 hover:text-white/60 border border-white/[0.06] hover:border-white/[0.12]'
+          }`}
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+          장르 · 플랫폼
+          {(filters.genres.length + filters.platform.length) > 0 && (
+            <span className="w-4 h-4 rounded-full bg-indigo-500 text-white text-[9px] flex items-center justify-center font-bold">
+              {filters.genres.length + filters.platform.length}
+            </span>
+          )}
+        </button>
+
+        <div className="ml-auto flex items-center gap-2">
+          <div className="relative">
+            <svg className="w-3.5 h-3.5 text-white/20 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="검색"
+              value={filters.searchQuery}
+              onChange={(e) => update({ searchQuery: e.target.value })}
+              className="bg-white/[0.04] text-white text-[12px] rounded-lg pl-9 pr-3 py-1.5 border border-white/[0.06] focus:outline-none focus:border-indigo-500/30 w-36 placeholder-white/20 transition-all"
+            />
+          </div>
+          <SortSelect value={sort} onChange={onSortChange} />
+          <span className="text-white/15 text-[11px] font-medium tabular-nums">
+            {resultCount}개
+          </span>
+        </div>
+      </div>
+
+      {/* 확장 필터 */}
+      {showFilters && (
+        <div className="space-y-5 pt-4 pb-2 border-t border-white/[0.04] animate-fade-up">
           <FilterChips
             label="장르"
             options={FILTER_GENRES}

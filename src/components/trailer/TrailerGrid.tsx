@@ -22,15 +22,20 @@ export default function TrailerGrid({ trailers, onToggleFavorite }: TrailerGridP
   if (trailers.length === 0) {
     return (
       <div className="text-center py-32">
-        <p className="text-[#86868b] text-lg">조건에 맞는 예고편이 없습니다</p>
-        <p className="text-[#48484a] text-sm mt-2">필터를 조정해보세요</p>
+        <div className="w-16 h-16 rounded-2xl bg-white/[0.03] flex items-center justify-center mx-auto mb-4">
+          <svg className="w-7 h-7 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <p className="text-white/30 text-[15px] font-medium">결과 없음</p>
+        <p className="text-white/15 text-[13px] mt-1">필터를 조정해보세요</p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
         {paginatedTrailers.map((trailer) => (
           <TrailerCard
             key={trailer.id}
@@ -41,19 +46,20 @@ export default function TrailerGrid({ trailers, onToggleFavorite }: TrailerGridP
         ))}
       </div>
 
-      {/* 더 보기 */}
       {page < totalPages && (
-        <div className="text-center mt-12">
+        <div className="text-center mt-14">
           <button
             onClick={() => setPage((p) => p + 1)}
-            className="px-8 py-3 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-[#f5f5f7] text-sm font-medium rounded-full transition-all border border-[#38383a] hover:border-[#48484a]"
+            className="group px-8 py-2.5 text-[13px] font-medium text-white/40 hover:text-white/70 rounded-xl border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.03] transition-all duration-200"
           >
             더 보기
+            <span className="text-white/15 ml-2 group-hover:text-white/30 transition-colors">
+              +{trailers.length - paginatedTrailers.length}
+            </span>
           </button>
         </div>
       )}
 
-      {/* 모달 */}
       {selectedTrailer && (
         <TrailerModal
           trailer={selectedTrailer}
