@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Bash(brew --version)",
+      "Bash(npm --version)",
+      "Bash(/opt/homebrew/bin/node --version)",
+      "Bash(/usr/local/bin/node --version)",
+      "Bash(/opt/homebrew/bin/brew --version)",
+      "Bash(/usr/local/bin/brew --version)",
+      "Read(//opt/**)",
+      "Read(//Users/jennie.han/n/bin/**)",
+      "Read(//Users/jennie.han/.nvm/versions/**)",
+      "Bash(source ~/.zshrc)",
+      "Bash(source ~/.zprofile)",
+      "Bash(source ~/.bash_profile)",
+      "Bash(echo \"PATH=$PATH\")",
+      "WebFetch(domain:developer.themoviedb.org)",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:www.rawg.io)",
+      "WebFetch(domain:vercel.com)",
+      "Bash(npx:*)"
+    ]
+  }
+}
