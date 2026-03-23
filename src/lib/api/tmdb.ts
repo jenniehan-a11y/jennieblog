@@ -185,7 +185,11 @@ function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: strin
   const year = movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : 0;
   const genres = movie.genre_ids.map((id) => MOVIE_GENRES[id]).filter(Boolean);
 
-  return youtubeVideos.map((video) => ({
+  // 같은 영화에서 트레일러 1개만 (가장 최신)
+  const sorted = youtubeVideos.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+  const best = sorted.slice(0, 1);
+
+  return best.map((video) => ({
     id: `movie-${movie.id}-${video.id}`,
     title: movie.title || movie.original_title,
     titleOriginal: movie.original_title,
@@ -218,7 +222,10 @@ function tvToTrailers(show: TMDBTVShow, videos: TMDBVideo[], platforms: string[]
   const isDocumentary = genreIds.includes(99);
   const contentType: ContentType = isDocumentary ? 'documentary' : 'drama';
 
-  return youtubeVideos.map((video) => ({
+  const sorted = youtubeVideos.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+  const best = sorted.slice(0, 1);
+
+  return best.map((video) => ({
     id: `tv-${show.id}-${video.id}`,
     title: show.name || show.original_name,
     titleOriginal: show.original_name,
@@ -440,11 +447,14 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     ...koreanDramas,
   ];
 
-  // 중복 제거 (같은 youtubeId)
-  const seen = new Set<string>();
+  // 중복 제거 (같은 작품은 1개만)
+  const seenTmdb = new Set<string>();
+  const seenYt = new Set<string>();
   const unique = all.filter((t) => {
-    if (seen.has(t.youtubeId)) return false;
-    seen.add(t.youtubeId);
+    const tmdbKey = `${t.contentType}-${t.tmdbId}`;
+    if (seenTmdb.has(tmdbKey) || seenYt.has(t.youtubeId)) return false;
+    seenTmdb.add(tmdbKey);
+    seenYt.add(t.youtubeId);
     return true;
   });
 
