@@ -177,10 +177,19 @@ const LANGUAGE_TO_COUNTRY: Record<string, string> = {
   da: 'DK', no: 'NO',
 };
 
+// 리뷰, 30초, 비하인드 등 제외 필터
+function isValidTrailer(v: TMDBVideo): boolean {
+  if (v.site !== 'YouTube' || v.type !== 'Trailer') return false;
+  const name = v.name.toLowerCase();
+  const excluded = ['리뷰', 'review', '30초', '15초', '숏츠', 'shorts',
+    '하이라이트', 'highlight', '비하인드', 'behind', '메이킹', 'making',
+    '리액션', 'reaction', '인터뷰', 'interview', '요약', 'recap',
+    '해설', 'explain', 'featurette', 'clip', '명장면', '스페셜'];
+  return !excluded.some(word => name.includes(word));
+}
+
 function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: string[] = []): Trailer[] {
-  const youtubeVideos = videos.filter(
-    (v) => v.site === 'YouTube' && v.type === 'Trailer'
-  );
+  const youtubeVideos = videos.filter(isValidTrailer);
 
   const country = movie.origin_country?.[0] || LANGUAGE_TO_COUNTRY[movie.original_language] || 'US';
   const year = movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : 0;
@@ -212,9 +221,7 @@ function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: strin
 }
 
 function tvToTrailers(show: TMDBTVShow, videos: TMDBVideo[], platforms: string[] = []): Trailer[] {
-  const youtubeVideos = videos.filter(
-    (v) => v.site === 'YouTube' && v.type === 'Trailer'
-  );
+  const youtubeVideos = videos.filter(isValidTrailer);
 
   const country = show.origin_country?.[0] || LANGUAGE_TO_COUNTRY[show.original_language] || 'US';
   const year = show.first_air_date ? parseInt(show.first_air_date.substring(0, 4)) : 0;
