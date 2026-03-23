@@ -40,10 +40,10 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
     <>
       <Header onFilter={setFilter} />
 
-      <div className="max-w-[1440px] mx-auto pt-10 pb-32 space-y-24">
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-16 pt-10 pb-32 space-y-24">
         {/* 히어로: 자동재생 (필터 없을 때만) */}
         {!filter && hero && (
-          <section className="px-6 lg:px-10 space-y-6">
+          <section className="space-y-6">
             <h1 className="text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
               Watch Now
             </h1>
@@ -68,14 +68,14 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
         )}
 
         {/* All Trailers / 필터 결과 */}
-        <section className="px-6 lg:px-10">
+        <section>
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
               {activeLabel || 'All Trailers'}
             </h2>
             <span className="text-black/20 text-sm font-medium">{filtered.length}</span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-14">
             {filtered.map(t => (
               <TrailerCard key={t.id} trailer={t} onPlay={setGridModal} />
             ))}

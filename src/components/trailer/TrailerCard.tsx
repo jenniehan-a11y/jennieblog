@@ -11,7 +11,7 @@ interface TrailerCardProps {
 export default function TrailerCard({ trailer, onPlay }: TrailerCardProps) {
   return (
     <div className="group cursor-pointer" onClick={() => onPlay(trailer)}>
-      <div className="relative aspect-video overflow-hidden bg-black/5">
+      <div className="relative aspect-video overflow-hidden bg-black/5 rounded-lg">
         <Image
           src={trailer.thumbnailUrl}
           alt={trailer.title}
