@@ -24,7 +24,7 @@ export default function TrailerRow({ title, trailers, showDate = false }: Traile
   };
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-6">
       {/* 제목 + 화살표 */}
       <div className="flex items-center gap-4 px-6 lg:px-10">
         <h2 className="text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">

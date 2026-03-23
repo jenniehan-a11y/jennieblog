@@ -91,7 +91,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
       )}
 
       {/* ALL FILMS: 4열 그리드 */}
-      <section className="px-6 lg:px-10">
+      <section className="px-6 lg:px-10 pt-10">
         <h2 className="text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9] mb-8">
           All Trailers
         </h2>
