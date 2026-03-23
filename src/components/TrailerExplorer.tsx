@@ -40,14 +40,14 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
     <>
       <Header onFilter={setFilter} />
 
-      <div className="max-w-[1400px] mx-auto px-8 lg:px-16 pt-10 pb-32 space-y-24">
+      <div className="pt-10 pb-32 space-y-24">
         {/* 히어로: 자동재생 (필터 없을 때만) */}
         {!filter && hero && (
           <section className="space-y-6">
-            <h1 className="text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
+            <h1 className="max-w-[1400px] mx-auto px-8 lg:px-16 text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
               Watch Now
             </h1>
-            <div className="relative aspect-video rounded-md overflow-hidden bg-black">
+            <div className="relative aspect-video overflow-hidden bg-black">
               <iframe
                 src={`https://www.youtube.com/embed/${hero.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${hero.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
                 allow="autoplay; encrypted-media"
@@ -68,7 +68,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
         )}
 
         {/* All Trailers / 필터 결과 */}
-        <section>
+        <section className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
               {activeLabel || 'All Trailers'}
