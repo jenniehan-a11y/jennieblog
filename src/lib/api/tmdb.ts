@@ -389,6 +389,52 @@ export async function fetchKoreanDramaTrailers(page: number = 1): Promise<Traile
   return allTrailers;
 }
 
+export async function fetchTopRatedTVTrailers(page: number = 1): Promise<Trailer[]> {
+  const data = await tmdbFetch<{ results: TMDBTVShow[] }>('/tv/top_rated', {
+    page: page.toString(),
+  });
+
+  const allTrailers: Trailer[] = [];
+
+  for (const show of data.results) {
+    try {
+      const [videos, platforms] = await Promise.all([
+        getTVVideos(show.id, show.original_language),
+        getTVProviders(show.id),
+      ]);
+      const trailers = tvToTrailers(show, videos, platforms);
+      allTrailers.push(...trailers);
+    } catch {
+      // skip
+    }
+  }
+
+  return allTrailers;
+}
+
+export async function fetchAiringTodayTVTrailers(): Promise<Trailer[]> {
+  const data = await tmdbFetch<{ results: TMDBTVShow[] }>('/tv/on_the_air', {
+    page: '1',
+  });
+
+  const allTrailers: Trailer[] = [];
+
+  for (const show of data.results) {
+    try {
+      const [videos, platforms] = await Promise.all([
+        getTVVideos(show.id, show.original_language),
+        getTVProviders(show.id),
+      ]);
+      const trailers = tvToTrailers(show, videos, platforms);
+      allTrailers.push(...trailers);
+    } catch {
+      // skip
+    }
+  }
+
+  return allTrailers;
+}
+
 export async function searchTrailers(query: string): Promise<Trailer[]> {
   const [movieData, tvData] = await Promise.all([
     tmdbFetch<{ results: TMDBMovie[] }>('/search/movie', { query }),
@@ -423,6 +469,9 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     popularMovies1,
     popularMovies2,
     popularTV1,
+    popularTV2,
+    topRatedTV1,
+    airingTV,
     nowPlaying,
     upcoming,
     koreanMovies,
@@ -431,6 +480,9 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     fetchPopularMovieTrailers(1),
     fetchPopularMovieTrailers(2),
     fetchPopularTVTrailers(1),
+    fetchPopularTVTrailers(2),
+    fetchTopRatedTVTrailers(1),
+    fetchAiringTodayTVTrailers(),
     fetchNowPlayingTrailers(),
     fetchUpcomingTrailers(),
     fetchKoreanMovieTrailers(1),
@@ -441,6 +493,9 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     ...popularMovies1,
     ...popularMovies2,
     ...popularTV1,
+    ...popularTV2,
+    ...topRatedTV1,
+    ...airingTV,
     ...nowPlaying,
     ...upcoming,
     ...koreanMovies,
