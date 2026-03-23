@@ -178,7 +178,7 @@ const LANGUAGE_TO_COUNTRY: Record<string, string> = {
 
 function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: string[] = []): Trailer[] {
   const youtubeVideos = videos.filter(
-    (v) => v.site === 'YouTube' && ['Trailer', 'Teaser'].includes(v.type)
+    (v) => v.site === 'YouTube' && v.type === 'Trailer'
   );
 
   const country = movie.origin_country?.[0] || LANGUAGE_TO_COUNTRY[movie.original_language] || 'US';
@@ -208,7 +208,7 @@ function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: strin
 
 function tvToTrailers(show: TMDBTVShow, videos: TMDBVideo[], platforms: string[] = []): Trailer[] {
   const youtubeVideos = videos.filter(
-    (v) => v.site === 'YouTube' && ['Trailer', 'Teaser'].includes(v.type)
+    (v) => v.site === 'YouTube' && v.type === 'Trailer'
   );
 
   const country = show.origin_country?.[0] || LANGUAGE_TO_COUNTRY[show.original_language] || 'US';
