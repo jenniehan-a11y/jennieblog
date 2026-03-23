@@ -58,7 +58,18 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
     return items
       .filter(item => {
         const title = item.snippet.title.toLowerCase();
-        return title.includes('trailer') || title.includes('예고') || title.includes('예고편') || title.includes('official');
+        const isTrailer = title.includes('trailer') || title.includes('예고') || title.includes('예고편') || title.includes('official');
+        // 리뷰, 30초, 15초, 숏츠, 하이라이트, 비하인드, 메이킹 등 제외
+        const isExcluded = title.includes('review') || title.includes('리뷰') ||
+          title.includes('30초') || title.includes('15초') || title.includes('shorts') ||
+          title.includes('highlight') || title.includes('하이라이트') ||
+          title.includes('behind') || title.includes('비하인드') ||
+          title.includes('making') || title.includes('메이킹') ||
+          title.includes('reaction') || title.includes('리액션') ||
+          title.includes('interview') || title.includes('인터뷰') ||
+          title.includes('recap') || title.includes('요약') ||
+          title.includes('explain') || title.includes('해설');
+        return isTrailer && !isExcluded;
       })
       .map(item => ({
         id: `yt-${channel.id}-${item.id.videoId}`,
