@@ -80,10 +80,10 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
 
       {/* ALL FILMS: 4열 그리드 */}
       <section className="px-6 lg:px-10 pt-10">
-        <h2 className="text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9] mb-8">
+        <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9] mb-10">
           All Trailers
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
           {all.slice(0, 16).map(t => (
             <TrailerCard key={t.id} trailer={t} onPlay={setGridModal} />
           ))}

@@ -19,7 +19,7 @@ body {
 
 .scroll-row {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
