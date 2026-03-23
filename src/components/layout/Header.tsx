@@ -64,7 +64,7 @@ export default function Header({ onFilter }: HeaderProps) {
       {/* 드롭다운 메뉴 */}
       {menuOpen && (
         <div className="fixed inset-0 z-30 bg-white pt-[112px]" onClick={() => setMenuOpen(false)}>
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-4" onClick={e => e.stopPropagation()}>
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-10 pt-8 py-4" onClick={e => e.stopPropagation()}>
             {MENU_ITEMS.map((item) => (
               <button
                 key={item.label}
