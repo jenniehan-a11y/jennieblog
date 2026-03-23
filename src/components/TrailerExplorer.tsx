@@ -3,12 +3,19 @@
 import { useState, useMemo } from 'react';
 import { Trailer } from '@/types/trailer';
 import Header from './layout/Header';
+import FilterBar from './filter/FilterBar';
 import TrailerCard from './trailer/TrailerCard';
 import TrailerModal from './trailer/TrailerModal';
 
 interface TrailerExplorerProps {
   initialTrailers: Trailer[];
 }
+
+const GENRE_LABELS: Record<string, string> = {
+  '액션': 'Action', '스릴러': 'Thriller', '공포': 'Horror', 'SF': 'Sci-Fi',
+  '로맨스': 'Romance', '드라마': 'Drama', '코미디': 'Comedy', '범죄': 'Crime',
+  '판타지': 'Fantasy', '미스터리': 'Mystery',
+};
 
 export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProps) {
   const [heroModal, setHeroModal] = useState<Trailer | null>(null);
@@ -24,16 +31,18 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
 
   const hero = initialTrailers[0];
 
-  // 필터 라벨
-  const filterLabel = filter?.genre
-    ? { '액션': 'Action', '스릴러': 'Thriller', '공포': 'Horror', 'SF': 'Sci-Fi', '로맨스': 'Romance', '드라마': 'Drama', '코미디': 'Comedy', '범죄': 'Crime', '판타지': 'Fantasy', '미스터리': 'Mystery' }[filter.genre] || filter.genre
-    : filter?.region === 'domestic' ? 'Korea' : filter?.region === 'international' ? 'International' : null;
+  const activeLabel = filter?.genre
+    ? GENRE_LABELS[filter.genre] || filter.genre
+    : filter?.region === 'domestic' ? 'Korea'
+    : filter?.region === 'international' ? 'International'
+    : null;
 
   return (
     <>
       <Header onFilter={setFilter} />
+      <FilterBar onFilter={setFilter} activeLabel={activeLabel} />
 
-      <div className="max-w-[1440px] mx-auto pt-8 pb-32 space-y-24">
+      <div className="max-w-[1440px] mx-auto pt-10 pb-32 space-y-24">
         {/* 히어로: 자동재생 (필터 없을 때만) */}
         {!filter && hero && (
           <section className="px-6 lg:px-10 space-y-6">
@@ -64,9 +73,9 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
         <section className="px-6 lg:px-10">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
-              {filterLabel || 'All Trailers'}
+              {activeLabel || 'All Trailers'}
             </h2>
-            <span className="text-black/20 text-sm font-medium">{filtered.length} trailers</span>
+            <span className="text-black/20 text-sm font-medium">{filtered.length}</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
             {filtered.map(t => (
