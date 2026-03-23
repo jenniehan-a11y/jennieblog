@@ -15,8 +15,6 @@ const MENU_ITEMS = [
   { label: 'Crime', value: { genre: '범죄' } },
   { label: 'Fantasy', value: { genre: '판타지' } },
   { label: 'Mystery', value: { genre: '미스터리' } },
-  { label: 'Korea', value: { region: 'domestic' } },
-  { label: 'International', value: { region: 'international' } },
 ];
 
 interface HeaderProps {
