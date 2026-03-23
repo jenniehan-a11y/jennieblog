@@ -32,15 +32,7 @@ export default function TrailerCard({ trailer, onPlay, showDate = false }: Trail
         </div>
       </div>
 
-      {/* 제목 */}
-      <h3 className="mt-2.5 text-black text-[13px] font-bold uppercase tracking-[-0.01em] line-clamp-1">
-        {trailer.title}
-      </h3>
-      {showDate && trailer.releaseDate && (
-        <p className="text-black/30 text-[11px] mt-0.5 uppercase tracking-[0.03em]">
-          {new Date(trailer.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-        </p>
-      )}
+{/* 제목 제거 — 썸네일에 이미 표시됨 */}
     </div>
   );
 }
