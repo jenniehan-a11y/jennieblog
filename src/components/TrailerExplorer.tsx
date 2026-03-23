@@ -11,7 +11,18 @@ interface TrailerExplorerProps {
   initialTrailers: Trailer[];
 }
 
-const GENRES = ['액션', '스릴러', '공포', 'SF', '로맨스', '드라마', '코미디', '범죄', '판타지', '미스터리'];
+const GENRES = [
+  { ko: '액션', en: 'Action' },
+  { ko: '스릴러', en: 'Thriller' },
+  { ko: '공포', en: 'Horror' },
+  { ko: 'SF', en: 'Sci-Fi' },
+  { ko: '로맨스', en: 'Romance' },
+  { ko: '드라마', en: 'Drama' },
+  { ko: '코미디', en: 'Comedy' },
+  { ko: '범죄', en: 'Crime' },
+  { ko: '판타지', en: 'Fantasy' },
+  { ko: '미스터리', en: 'Mystery' },
+];
 
 export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProps) {
   const [heroModal, setHeroModal] = useState<Trailer | null>(null);
@@ -30,8 +41,8 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
 
   const genreSections = useMemo(() =>
     GENRES.map(g => ({
-      label: g,
-      trailers: all.filter(t => t.genres.includes(g)).slice(0, 15),
+      label: g.en,
+      trailers: all.filter(t => t.genres.includes(g.ko)).slice(0, 15),
     })).filter(s => s.trailers.length >= 3),
   [all]);
 
@@ -41,8 +52,8 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
       {hero && (
         <section className="px-6 lg:px-10">
           {/* 큰 타이틀 */}
-          <h1 className="text-black text-[clamp(3rem,10vw,8rem)] font-black tracking-[-0.06em] uppercase leading-[0.85] mb-8">
-            Watch<br />Now
+          <h1 className="text-black text-[clamp(2.5rem,6vw,5rem)] font-black tracking-[-0.05em] uppercase leading-[0.9] mb-8">
+            Watch Now
           </h1>
 
           {/* 히어로 카드 */}
