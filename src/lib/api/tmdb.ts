@@ -1,5 +1,5 @@
 import { Trailer, ContentType } from '@/types/trailer';
-import { MOVIE_GENRES, TV_GENRES } from '@/lib/data/genres';
+import { MOVIE_GENRES, TV_GENRE_MAP } from '@/lib/data/genres';
 import { getRegion } from '@/lib/data/countries';
 import { fetchYouTubeTrailers } from './youtube';
 
@@ -219,7 +219,8 @@ function tvToTrailers(show: TMDBTVShow, videos: TMDBVideo[], platforms: string[]
   const country = show.origin_country?.[0] || LANGUAGE_TO_COUNTRY[show.original_language] || 'US';
   const year = show.first_air_date ? parseInt(show.first_air_date.substring(0, 4)) : 0;
   const genreIds = show.genre_ids;
-  const genres = genreIds.map((id) => TV_GENRES[id]).filter(Boolean);
+  // TV 장르: 복합 장르를 개별로 분리 (액션/모험 → [액션, 모험])
+  const genres = [...new Set(genreIds.flatMap((id) => TV_GENRE_MAP[id] || []))];
   const isDocumentary = genreIds.includes(99);
   const contentType: ContentType = isDocumentary ? 'documentary' : 'drama';
 
