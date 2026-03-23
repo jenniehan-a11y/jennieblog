@@ -13,7 +13,7 @@ interface TrailerExplorerProps {
 const GENRE_LABELS: Record<string, string> = {
   '액션': 'Action', '스릴러': 'Thriller', '공포': 'Horror', 'SF': 'Sci-Fi',
   '로맨스': 'Romance', '드라마': 'Drama', '코미디': 'Comedy', '범죄': 'Crime',
-  '판타지': 'Fantasy', '미스터리': 'Mystery',
+  '판타지': 'Fantasy', '미스터리': 'Mystery', '애니메이션': 'Animation',
 };
 
 export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProps) {
@@ -23,7 +23,14 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
 
   const filtered = useMemo(() => {
     if (!filter) return initialTrailers;
-    if (filter.genre) return initialTrailers.filter(t => t.genres.includes(filter.genre!));
+    if (filter.genre === '애니메이션') {
+      // 애니메이션 카테고리: 애니메이션 장르만
+      return initialTrailers.filter(t => t.genres.includes('애니메이션'));
+    }
+    if (filter.genre) {
+      // 다른 장르: 애니메이션 제외
+      return initialTrailers.filter(t => t.genres.includes(filter.genre!) && !t.genres.includes('애니메이션'));
+    }
     if (filter.region) return initialTrailers.filter(t => t.region === filter.region);
     return initialTrailers;
   }, [initialTrailers, filter]);

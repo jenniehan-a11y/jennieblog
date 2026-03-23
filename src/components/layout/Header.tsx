@@ -15,6 +15,7 @@ const MENU_ITEMS = [
   { label: 'Crime', value: { genre: '범죄' } },
   { label: 'Fantasy', value: { genre: '판타지' } },
   { label: 'Mystery', value: { genre: '미스터리' } },
+  { label: 'Animation', value: { genre: '애니메이션' } },
 ];
 
 interface HeaderProps {
