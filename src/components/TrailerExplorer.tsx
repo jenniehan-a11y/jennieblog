@@ -57,11 +57,11 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
           </h1>
 
           {/* 히어로 카드: 자동재생 */}
-          <div className="relative aspect-[21/9] rounded-md overflow-hidden bg-black">
+          <div className="relative aspect-video rounded-md overflow-hidden bg-black">
             <iframe
               src={`https://www.youtube.com/embed/${hero.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${hero.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
               allow="autoplay; encrypted-media"
-              className="absolute inset-0 w-full h-full pointer-events-none scale-[1.2]"
+              className="absolute inset-0 w-full h-full pointer-events-none"
               title={hero.title}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
