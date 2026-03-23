@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Trailer } from '@/types/trailer';
 import Header from './layout/Header';
 import TrailerCard from './trailer/TrailerCard';
@@ -20,15 +20,16 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
   const [heroModal, setHeroModal] = useState<Trailer | null>(null);
   const [gridModal, setGridModal] = useState<Trailer | null>(null);
   const [filter, setFilter] = useState<{ genre?: string; region?: string } | null>(null);
+  const [searchResults, setSearchResults] = useState<Trailer[] | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searching, setSearching] = useState(false);
 
   const filtered = useMemo(() => {
     if (!filter) return initialTrailers;
     if (filter.genre === '애니메이션') {
-      // 애니메이션 카테고리: 애니메이션 장르만
       return initialTrailers.filter(t => t.genres.includes('애니메이션'));
     }
     if (filter.genre) {
-      // 다른 장르: 애니메이션 제외
       return initialTrailers.filter(t => t.genres.includes(filter.genre!) && !t.genres.includes('애니메이션'));
     }
     if (filter.region) return initialTrailers.filter(t => t.region === filter.region);
@@ -43,13 +44,45 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
     : filter?.region === 'international' ? 'International'
     : null;
 
+  const handleSearch = useCallback(async (query: string) => {
+    setSearchQuery(query);
+    setSearching(true);
+    setFilter(null);
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      setSearchResults(data);
+    } catch {
+      setSearchResults([]);
+    }
+    setSearching(false);
+  }, []);
+
+  const handleSearchClear = useCallback(() => {
+    setSearchResults(null);
+    setSearchQuery('');
+  }, []);
+
+  const handleFilter = useCallback((f: { genre?: string; region?: string } | null) => {
+    setFilter(f);
+    setSearchResults(null);
+    setSearchQuery('');
+  }, []);
+
+  // 검색 모드인지
+  const isSearchMode = searchResults !== null;
+  const displayTrailers = isSearchMode ? searchResults : filtered;
+  const title = isSearchMode
+    ? `"${searchQuery}"`
+    : activeLabel || 'All Trailers';
+
   return (
     <>
-      <Header onFilter={setFilter} />
+      <Header onFilter={handleFilter} onSearch={handleSearch} onSearchClear={handleSearchClear} />
 
       <div className="pt-10 pb-32 space-y-24">
-        {/* 히어로: 자동재생 (필터 없을 때만) */}
-        {!filter && hero && (
+        {/* 히어로: 필터/검색 없을 때만 */}
+        {!filter && !isSearchMode && hero && (
           <section>
             <div className="relative aspect-video overflow-hidden bg-black">
               <iframe
@@ -71,19 +104,34 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
           </section>
         )}
 
-        {/* All Trailers / 필터 결과 */}
+        {/* 트레일러 그리드 */}
         <section className="px-10 lg:px-20">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
-              {activeLabel || 'All Trailers'}
+              {title}
             </h2>
-            <span className="text-black/20 text-sm font-medium">{filtered.length}</span>
+            <span className="text-black/20 text-sm font-medium">
+              {searching ? '검색 중...' : `${displayTrailers.length}`}
+            </span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-14">
-            {filtered.map(t => (
-              <TrailerCard key={t.id} trailer={t} onPlay={setGridModal} />
-            ))}
-          </div>
+
+          {searching ? (
+            <div className="text-center py-20">
+              <p className="text-black/30 text-sm">검색 중...</p>
+            </div>
+          ) : displayTrailers.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-black/30 text-sm">
+                {isSearchMode ? '검색 결과가 없습니다' : '예고편이 없습니다'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-14">
+              {displayTrailers.map(t => (
+                <TrailerCard key={t.id} trailer={t} onPlay={setGridModal} />
+              ))}
+            </div>
+          )}
         </section>
       </div>
 
