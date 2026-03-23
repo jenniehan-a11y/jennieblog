@@ -39,10 +39,10 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
     const params = new URLSearchParams({
       part: 'snippet',
       channelId: channel.id,
-      q: 'trailer OR 예고편 OR official trailer',
+      q: 'official trailer|예고편|공식 예고편',
       type: 'video',
       order: 'date',
-      maxResults: '10',
+      maxResults: '15',
       key: YOUTUBE_API_KEY,
     });
 
