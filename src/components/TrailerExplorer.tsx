@@ -44,7 +44,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
         {/* 히어로: 자동재생 (필터 없을 때만) */}
         {!filter && hero && (
           <section className="space-y-6">
-            <h1 className="px-8 lg:px-16 text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
+            <h1 className="px-10 lg:px-20 text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
               Watch Now
             </h1>
             <div className="relative aspect-video overflow-hidden bg-black">
@@ -68,7 +68,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
         )}
 
         {/* All Trailers / 필터 결과 */}
-        <section className="px-8 lg:px-16">
+        <section className="px-10 lg:px-20">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
               {activeLabel || 'All Trailers'}
