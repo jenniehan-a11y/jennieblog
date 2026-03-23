@@ -64,18 +64,6 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
               className="absolute inset-0 w-full h-full pointer-events-none"
               title={hero.title}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
-
-            {/* 제목 오버레이 */}
-            <div className="absolute bottom-0 left-0 p-6 md:p-10 z-10">
-              <h2 className="text-white text-[clamp(2rem,5vw,4.5rem)] font-black tracking-[-0.05em] uppercase leading-[0.9] drop-shadow-lg">
-                {hero.title}
-              </h2>
-              <p className="text-white/50 text-xs uppercase tracking-[0.1em] font-semibold mt-2">
-                {hero.year} · {hero.genres.slice(0, 2).join(' · ')}
-              </p>
-            </div>
-
             {/* Play 버튼 */}
             <button
               onClick={() => setHeroModal(hero)}
