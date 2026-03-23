@@ -47,11 +47,11 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
             <h1 className="max-w-[1400px] mx-auto px-8 lg:px-16 text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
               Watch Now
             </h1>
-            <div className="relative aspect-video overflow-hidden bg-black">
+            <div className="relative aspect-[2.2/1] overflow-hidden bg-black">
               <iframe
                 src={`https://www.youtube.com/embed/${hero.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${hero.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
                 allow="autoplay; encrypted-media"
-                className="absolute inset-0 w-full h-full pointer-events-none"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] pointer-events-none"
                 title={hero.title}
               />
               <button
