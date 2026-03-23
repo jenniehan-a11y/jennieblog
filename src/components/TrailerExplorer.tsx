@@ -56,22 +56,18 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
             Watch Now
           </h1>
 
-          {/* 히어로 카드 */}
-          <div
-            className="relative aspect-[21/9] rounded-md overflow-hidden cursor-pointer group"
-            onClick={() => setHeroModal(hero)}
-          >
-            <Image
-              src={`https://img.youtube.com/vi/${hero.youtubeId}/maxresdefault.jpg`}
-              alt={hero.title}
-              fill
-              className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-[1.02]"
-              priority
+          {/* 히어로 카드: 자동재생 */}
+          <div className="relative aspect-[21/9] rounded-md overflow-hidden bg-black">
+            <iframe
+              src={`https://www.youtube.com/embed/${hero.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${hero.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
+              allow="autoplay; encrypted-media"
+              className="absolute inset-0 w-full h-full pointer-events-none scale-[1.2]"
+              title={hero.title}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
             {/* 제목 오버레이 */}
-            <div className="absolute bottom-0 left-0 p-6 md:p-10">
+            <div className="absolute bottom-0 left-0 p-6 md:p-10 z-10">
               <h2 className="text-white text-[clamp(2rem,5vw,4.5rem)] font-black tracking-[-0.05em] uppercase leading-[0.9] drop-shadow-lg">
                 {hero.title}
               </h2>
@@ -81,14 +77,15 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
             </div>
 
             {/* Play 버튼 */}
-            <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.08em] rounded-full shadow-xl">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-                Play Trailer
-              </span>
-            </div>
+            <button
+              onClick={() => setHeroModal(hero)}
+              className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-10 inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.08em] rounded-full shadow-xl hover:bg-black hover:text-white transition-colors cursor-pointer"
+            >
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              Watch Full Trailer
+            </button>
           </div>
         </section>
       )}
