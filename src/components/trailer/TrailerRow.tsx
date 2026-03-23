@@ -30,16 +30,16 @@ export default function TrailerRow({ title, trailers, showDate = false }: Traile
         <h2 className="text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
           {title}
         </h2>
-        <div className="flex gap-1 ml-2">
+        <div className="flex gap-1 ml-3">
           <button onClick={() => scroll('left')}
-            className="w-8 h-8 rounded-full border border-black/15 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            className="w-6 h-6 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all text-black/40">
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button onClick={() => scroll('right')}
-            className="w-8 h-8 rounded-full border border-black/15 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            className="w-6 h-6 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white hover:border-black transition-all text-black/40">
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
