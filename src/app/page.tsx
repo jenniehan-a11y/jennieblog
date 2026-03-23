@@ -14,12 +14,10 @@ export default async function Home() {
 
   return trailers.length === 0 ? (
     <div className="text-center py-32 px-6">
-      <p className="text-white/30 text-lg font-bold uppercase tracking-[0.1em]">No Trailers</p>
-      <p className="text-white/15 text-sm mt-2">TMDB_API_KEY를 설정해주세요</p>
+      <p className="text-black/30 text-lg font-bold uppercase tracking-[0.1em]">No Trailers</p>
+      <p className="text-black/15 text-sm mt-2">TMDB_API_KEY를 설정해주세요</p>
     </div>
   ) : (
-    <div className="pt-10 pb-32">
-      <TrailerExplorer initialTrailers={trailers} />
-    </div>
+    <TrailerExplorer initialTrailers={trailers} />
   );
 }
