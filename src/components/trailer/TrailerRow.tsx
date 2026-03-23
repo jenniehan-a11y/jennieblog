@@ -8,10 +8,9 @@ import TrailerModal from './TrailerModal';
 interface TrailerRowProps {
   title: string;
   trailers: Trailer[];
-  showDate?: boolean;
 }
 
-export default function TrailerRow({ title, trailers, showDate = false }: TrailerRowProps) {
+export default function TrailerRow({ title, trailers }: TrailerRowProps) {
   const [selected, setSelected] = useState<Trailer | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +24,6 @@ export default function TrailerRow({ title, trailers, showDate = false }: Traile
 
   return (
     <section className="space-y-5 pt-4">
-      {/* 제목 + 화살표 */}
       <div className="flex items-center gap-4 px-6 lg:px-10">
         <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
           {title}
@@ -46,11 +44,10 @@ export default function TrailerRow({ title, trailers, showDate = false }: Traile
         </div>
       </div>
 
-      {/* 카루셀 */}
       <div ref={scrollRef} className="scroll-row px-6 lg:px-10">
         {trailers.map((t) => (
-          <div key={t.id} className="w-[calc(25%-12px)] min-w-[260px]">
-            <TrailerCard trailer={t} onPlay={setSelected} showDate={showDate} />
+          <div key={t.id} className="w-[calc(25%-18px)] min-w-[260px]">
+            <TrailerCard trailer={t} onPlay={setSelected} />
           </div>
         ))}
       </div>

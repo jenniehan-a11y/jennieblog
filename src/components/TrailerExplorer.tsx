@@ -68,7 +68,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
             </h2>
             <span className="text-black/20 text-sm font-medium">{filtered.length} trailers</span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
             {filtered.map(t => (
               <TrailerCard key={t.id} trailer={t} onPlay={setGridModal} />
             ))}
