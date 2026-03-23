@@ -47,7 +47,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
   [all]);
 
   return (
-    <div className="space-y-20">
+    <div className="space-y-28">
       {/* 히어로: WATCH NOW 스타일 */}
       {hero && (
         <section className="px-6 lg:px-10">

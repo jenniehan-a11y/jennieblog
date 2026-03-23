@@ -18,7 +18,7 @@ export default async function Home() {
       <p className="text-white/15 text-sm mt-2">TMDB_API_KEY를 설정해주세요</p>
     </div>
   ) : (
-    <div className="pt-6 pb-24">
+    <div className="pt-10 pb-32">
       <TrailerExplorer initialTrailers={trailers} />
     </div>
   );
