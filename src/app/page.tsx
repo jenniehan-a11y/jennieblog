@@ -12,16 +12,14 @@ export default async function Home() {
     console.error('Failed to fetch trailers:', error);
   }
 
-  return (
-    <div className="max-w-[1440px] mx-auto pt-6 pb-20">
-      {trailers.length === 0 ? (
-        <div className="text-center py-32 px-6">
-          <p className="text-white/30 text-lg">예고편 데이터를 불러오지 못했습니다</p>
-          <p className="text-white/15 text-sm mt-2">.env.local에 TMDB_API_KEY를 추가해주세요</p>
-        </div>
-      ) : (
-        <TrailerExplorer initialTrailers={trailers} />
-      )}
+  return trailers.length === 0 ? (
+    <div className="text-center py-32 px-6">
+      <p className="text-white/30 text-lg font-bold uppercase tracking-[0.1em]">No Trailers</p>
+      <p className="text-white/15 text-sm mt-2">TMDB_API_KEY를 설정해주세요</p>
+    </div>
+  ) : (
+    <div className="pt-6 pb-24">
+      <TrailerExplorer initialTrailers={trailers} />
     </div>
   );
 }
