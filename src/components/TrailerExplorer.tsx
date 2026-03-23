@@ -43,10 +43,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
       <div className="pt-10 pb-32 space-y-24">
         {/* 히어로: 자동재생 (필터 없을 때만) */}
         {!filter && hero && (
-          <section className="space-y-6">
-            <h1 className="px-10 lg:px-20 text-black text-[clamp(2rem,5vw,4rem)] font-black tracking-[-0.05em] uppercase leading-[0.9]">
-              Watch Now
-            </h1>
+          <section>
             <div className="relative aspect-video overflow-hidden bg-black">
               <iframe
                 src={`https://www.youtube.com/embed/${hero.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${hero.youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
