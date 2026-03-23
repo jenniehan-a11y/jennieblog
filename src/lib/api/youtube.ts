@@ -60,15 +60,12 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
         const title = item.snippet.title.toLowerCase();
         const isTrailer = title.includes('trailer') || title.includes('예고') || title.includes('예고편') || title.includes('official');
         // 리뷰, 30초, 15초, 숏츠, 하이라이트, 비하인드, 메이킹 등 제외
-        const isExcluded = title.includes('review') || title.includes('리뷰') ||
-          title.includes('30초') || title.includes('15초') || title.includes('shorts') ||
-          title.includes('highlight') || title.includes('하이라이트') ||
-          title.includes('behind') || title.includes('비하인드') ||
-          title.includes('making') || title.includes('메이킹') ||
-          title.includes('reaction') || title.includes('리액션') ||
-          title.includes('interview') || title.includes('인터뷰') ||
-          title.includes('recap') || title.includes('요약') ||
-          title.includes('explain') || title.includes('해설');
+        const excludeWords = ['review', '리뷰', '30초', '15초', 'shorts', 'highlight', '하이라이트',
+          'behind', '비하인드', 'making', '메이킹', 'reaction', '리액션', 'interview', '인터뷰',
+          'recap', '요약', 'explain', '해설', 'character', '캐릭터', '본편', '무삭제', 'deleted',
+          'scene', '선공개', 'sneak', 'peek', 'opening', '엔딩', 'ending', 'ost', '뮤직비디오',
+          'music video', '명장면', '스페셜', 'featurette', 'clip'];
+        const isExcluded = excludeWords.some(w => title.includes(w));
         return isTrailer && !isExcluded;
       })
       .map(item => ({

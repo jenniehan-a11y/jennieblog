@@ -184,7 +184,10 @@ function isValidTrailer(v: TMDBVideo): boolean {
   const excluded = ['리뷰', 'review', '30초', '15초', '숏츠', 'shorts',
     '하이라이트', 'highlight', '비하인드', 'behind', '메이킹', 'making',
     '리액션', 'reaction', '인터뷰', 'interview', '요약', 'recap',
-    '해설', 'explain', 'featurette', 'clip', '명장면', '스페셜'];
+    '해설', 'explain', 'featurette', 'clip', '명장면', '스페셜',
+    '캐릭터', 'character', '본편', '무삭제', 'deleted', 'scene',
+    '선공개', 'sneak', 'peek', 'opening', '엔딩', 'ending',
+    'ost', '뮤직비디오', 'music video', 'mv'];
   return !excluded.some(word => name.includes(word));
 }
 
