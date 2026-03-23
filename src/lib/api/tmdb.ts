@@ -134,39 +134,39 @@ function mapTrailerType(type: string): Trailer['trailerType'] {
   }
 }
 
-async function getMovieVideos(movieId: number): Promise<TMDBVideo[]> {
-  const data = await tmdbFetch<{ results: TMDBVideo[] }>(
-    `/movie/${movieId}/videos`,
-    { language: 'ko-KR' }
-  );
+// 해외 작품은 원어 버전, 국내 작품은 한국어 버전 예고편
+async function getMovieVideos(movieId: number, originalLanguage: string): Promise<TMDBVideo[]> {
+  const isKorean = originalLanguage === 'ko';
 
-  // 한국어 결과가 없으면 영어로 재시도
-  if (data.results.length === 0) {
-    const enData = await tmdbFetch<{ results: TMDBVideo[] }>(
-      `/movie/${movieId}/videos`,
-      { language: 'en-US' }
-    );
-    return enData.results;
+  if (isKorean) {
+    // 국내: 한국어 먼저, 없으면 영어
+    const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'ko-KR' });
+    if (data.results.length > 0) return data.results;
+    const en = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'en-US' });
+    return en.results;
+  } else {
+    // 해외: 영어(원어) 먼저, 없으면 한국어
+    const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'en-US' });
+    if (data.results.length > 0) return data.results;
+    const ko = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'ko-KR' });
+    return ko.results;
   }
-
-  return data.results;
 }
 
-async function getTVVideos(tvId: number): Promise<TMDBVideo[]> {
-  const data = await tmdbFetch<{ results: TMDBVideo[] }>(
-    `/tv/${tvId}/videos`,
-    { language: 'ko-KR' }
-  );
+async function getTVVideos(tvId: number, originalLanguage: string): Promise<TMDBVideo[]> {
+  const isKorean = originalLanguage === 'ko';
 
-  if (data.results.length === 0) {
-    const enData = await tmdbFetch<{ results: TMDBVideo[] }>(
-      `/tv/${tvId}/videos`,
-      { language: 'en-US' }
-    );
-    return enData.results;
+  if (isKorean) {
+    const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'ko-KR' });
+    if (data.results.length > 0) return data.results;
+    const en = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'en-US' });
+    return en.results;
+  } else {
+    const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'en-US' });
+    if (data.results.length > 0) return data.results;
+    const ko = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'ko-KR' });
+    return ko.results;
   }
-
-  return data.results;
 }
 
 // 언어 코드 → 국가 코드 매핑 (origin_country가 없을 때 사용)
@@ -250,7 +250,7 @@ export async function fetchPopularMovieTrailers(page: number = 1): Promise<Trail
   for (const movie of data.results) {
     try {
       const [videos, platforms] = await Promise.all([
-        getMovieVideos(movie.id),
+        getMovieVideos(movie.id, movie.original_language),
         getMovieProviders(movie.id),
       ]);
       const trailers = movieToTrailers(movie, videos, platforms);
@@ -273,7 +273,7 @@ export async function fetchPopularTVTrailers(page: number = 1): Promise<Trailer[
   for (const show of data.results) {
     try {
       const [videos, platforms] = await Promise.all([
-        getTVVideos(show.id),
+        getTVVideos(show.id, show.original_language),
         getTVProviders(show.id),
       ]);
       const trailers = tvToTrailers(show, videos, platforms);
@@ -296,7 +296,7 @@ export async function fetchNowPlayingTrailers(): Promise<Trailer[]> {
   for (const movie of data.results) {
     try {
       const [videos, platforms] = await Promise.all([
-        getMovieVideos(movie.id),
+        getMovieVideos(movie.id, movie.original_language),
         getMovieProviders(movie.id),
       ]);
       const trailers = movieToTrailers(movie, videos, platforms);
@@ -319,7 +319,7 @@ export async function fetchUpcomingTrailers(): Promise<Trailer[]> {
   for (const movie of data.results) {
     try {
       const [videos, platforms] = await Promise.all([
-        getMovieVideos(movie.id),
+        getMovieVideos(movie.id, movie.original_language),
         getMovieProviders(movie.id),
       ]);
       const trailers = movieToTrailers(movie, videos, platforms);
@@ -344,7 +344,7 @@ export async function fetchKoreanMovieTrailers(page: number = 1): Promise<Traile
   for (const movie of data.results) {
     try {
       const [videos, platforms] = await Promise.all([
-        getMovieVideos(movie.id),
+        getMovieVideos(movie.id, movie.original_language),
         getMovieProviders(movie.id),
       ]);
       const trailers = movieToTrailers(movie, videos, platforms);
@@ -369,7 +369,7 @@ export async function fetchKoreanDramaTrailers(page: number = 1): Promise<Traile
   for (const show of data.results) {
     try {
       const [videos, platforms] = await Promise.all([
-        getTVVideos(show.id),
+        getTVVideos(show.id, show.original_language),
         getTVProviders(show.id),
       ]);
       const trailers = tvToTrailers(show, videos, platforms);
@@ -392,7 +392,7 @@ export async function searchTrailers(query: string): Promise<Trailer[]> {
 
   for (const movie of movieData.results.slice(0, 10)) {
     try {
-      const videos = await getMovieVideos(movie.id);
+      const videos = await getMovieVideos(movie.id, movie.original_language);
       allTrailers.push(...movieToTrailers(movie, videos));
     } catch {
       // skip
@@ -401,7 +401,7 @@ export async function searchTrailers(query: string): Promise<Trailer[]> {
 
   for (const show of tvData.results.slice(0, 10)) {
     try {
-      const videos = await getTVVideos(show.id);
+      const videos = await getTVVideos(show.id, show.original_language);
       allTrailers.push(...tvToTrailers(show, videos));
     } catch {
       // skip
