@@ -6,28 +6,24 @@ import { Trailer } from '@/types/trailer';
 interface TrailerCardProps {
   trailer: Trailer;
   onPlay: (trailer: Trailer) => void;
-  size?: 'large' | 'medium' | 'small';
   showDate?: boolean;
 }
 
-export default function TrailerCard({ trailer, onPlay, size = 'medium', showDate = false }: TrailerCardProps) {
-  const widthClass = size === 'large' ? 'w-[400px] md:w-[500px]' : size === 'small' ? 'w-[200px] md:w-[240px]' : 'w-[280px] md:w-[320px]';
-
+export default function TrailerCard({ trailer, onPlay, showDate = false }: TrailerCardProps) {
   return (
-    <div className={`${widthClass} group cursor-pointer`} onClick={() => onPlay(trailer)}>
-      {/* 포스터 */}
-      <div className="relative aspect-video rounded-sm overflow-hidden bg-white/5">
+    <div className="group cursor-pointer" onClick={() => onPlay(trailer)}>
+      {/* 썸네일 */}
+      <div className="relative aspect-video rounded-md overflow-hidden bg-black/5">
         <Image
           src={trailer.thumbnailUrl}
           alt={trailer.title}
           fill
-          className="object-cover transition-all duration-500 group-hover:scale-[1.03] group-hover:brightness-75"
-          sizes={size === 'large' ? '500px' : size === 'small' ? '240px' : '320px'}
+          className="object-cover transition-all duration-500 group-hover:scale-[1.03]"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
-
-        {/* Play Trailer 버튼 */}
-        <div className="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-[0.05em] rounded-full">
+        {/* 호버: Play Trailer */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+          <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.08em] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100 shadow-xl">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -36,17 +32,15 @@ export default function TrailerCard({ trailer, onPlay, size = 'medium', showDate
         </div>
       </div>
 
-      {/* 정보 */}
-      <div className="mt-3">
-        <h3 className="text-white text-sm font-bold tracking-[-0.01em] line-clamp-1 group-hover:text-white/70 transition-colors">
-          {trailer.title}
-        </h3>
-        {showDate && trailer.releaseDate && (
-          <p className="text-white/30 text-xs mt-1 uppercase tracking-[0.05em]">
-            {new Date(trailer.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-          </p>
-        )}
-      </div>
+      {/* 제목 */}
+      <h3 className="mt-2.5 text-black text-[13px] font-bold uppercase tracking-[-0.01em] line-clamp-1">
+        {trailer.title}
+      </h3>
+      {showDate && trailer.releaseDate && (
+        <p className="text-black/30 text-[11px] mt-0.5 uppercase tracking-[0.03em]">
+          {new Date(trailer.releaseDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+        </p>
+      )}
     </div>
   );
 }
