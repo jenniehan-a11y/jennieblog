@@ -1,6 +1,7 @@
 import { Trailer, ContentType } from '@/types/trailer';
 import { MOVIE_GENRES, TV_GENRES } from '@/lib/data/genres';
 import { getRegion } from '@/lib/data/countries';
+import { fetchYouTubeTrailers } from './youtube';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
@@ -476,6 +477,7 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     upcoming,
     koreanMovies,
     koreanDramas,
+    youtubeTrailers,
   ] = await Promise.all([
     fetchPopularMovieTrailers(1),
     fetchPopularMovieTrailers(2),
@@ -487,6 +489,7 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     fetchUpcomingTrailers(),
     fetchKoreanMovieTrailers(1),
     fetchKoreanDramaTrailers(1),
+    fetchYouTubeTrailers(),
   ]);
 
   const all = [
@@ -500,6 +503,7 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     ...upcoming,
     ...koreanMovies,
     ...koreanDramas,
+    ...youtubeTrailers,
   ];
 
   // 중복 제거 (같은 작품은 1개만)
