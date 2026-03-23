@@ -22,6 +22,7 @@ export const MOVIE_GENRES: Record<number, string> = {
 };
 
 export const TV_GENRES: Record<number, string> = {
+  16: '애니메이션',
   10759: '액션/모험',
   35: '코미디',
   80: '범죄',
