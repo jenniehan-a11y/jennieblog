@@ -34,11 +34,11 @@ export default function Header({ onFilter }: HeaderProps) {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-black/5">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-14 flex items-center gap-4">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-14 flex items-center justify-center relative">
           {/* 햄버거 메뉴 */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="w-8 h-8 flex flex-col justify-center items-center gap-[5px] group"
+            className="absolute left-6 lg:left-10 w-8 h-8 flex flex-col justify-center items-center gap-[5px] group"
             aria-label="메뉴"
           >
             <span className={`block w-6 h-[2px] bg-black transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
