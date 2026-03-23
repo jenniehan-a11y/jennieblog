@@ -5,21 +5,36 @@ const YOUTUBE_BASE = 'https://www.googleapis.com/youtube/v3';
 
 // 공식 유튜브 채널 목록
 const CHANNELS = [
-  // 한국 OTT/배급사
+  // 한국 OTT
   { id: 'UCiEEF51uRAeZeCo8CJFhGWw', name: '넷플릭스 코리아', region: 'domestic' as const },
   { id: 'UCt4jGMWMwMZMbqaFKkp4GQg', name: '디즈니+ 코리아', region: 'domestic' as const },
   { id: 'UC1gxHEm3JwMwaB1YqpjDSwA', name: '티빙', region: 'domestic' as const },
-  { id: 'UCbFoS1h4MM5hhUMCH62WxOQ', name: '쿠팡플레이', region: 'domestic' as const },
+  { id: 'UCjn-VbcIkAeXQKCmLJV8YwQ', name: '쿠팡플레이', region: 'domestic' as const },
   { id: 'UCqMxSHOEbn-f5nVCuDW5YbA', name: '웨이브', region: 'domestic' as const },
+  // 한국 방송사
+  { id: 'UC9w-h_ciMmX64TcLRcb1xPg', name: 'tvN DRAMA', region: 'domestic' as const },
+  { id: 'UCQft5MhepGbMPFYV6eT0KjA', name: 'tvN', region: 'domestic' as const },
+  { id: 'UCbvhmRig-3AONuGXJCRpirg', name: 'JTBC Drama', region: 'domestic' as const },
+  { id: 'UCbhkGk74PJfoBVGnGhflRiw', name: 'JTBC Entertainment', region: 'domestic' as const },
+  { id: 'UCn9NGEyMPGquvN605eWHoGQ', name: 'SBS Drama', region: 'domestic' as const },
+  { id: 'UCiU3pBKUVGiGdwMKBbQIxQw', name: 'MBC Drama', region: 'domestic' as const },
+  { id: 'UCruu_TBfTKMl63v0cVJb7Rw', name: 'KBS Drama', region: 'domestic' as const },
   { id: 'UCw0LjEsFRJCM0aIUZlYFHBQ', name: 'CJ ENM', region: 'domestic' as const },
-  // 해외 스튜디오/배급사
+  { id: 'UCaKod3X1Tn4c7Ci0iUKcvzQ', name: '왓챠', region: 'domestic' as const },
+  // 해외 OTT/스튜디오
+  { id: 'UCynfGRBFmWjZ3g62OBVIzVQ', name: 'Netflix', region: 'international' as const },
+  { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
+  { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
+  { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
+  { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
   { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
   { id: 'UCJ6nMHaJPZvsJ-HmUmj1SeA', name: 'Lionsgate', region: 'international' as const },
-  { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
-  { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
-  { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
-  { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
-  { id: 'UCynfGRBFmWjZ3g62OBVIzVQ', name: 'Netflix', region: 'international' as const },
+  { id: 'UCz9MxqMFGYhBGYMFNNE9Ksw', name: 'Hulu', region: 'international' as const },
+  { id: 'UCVTQuK2CaWaTgSsoNkn5AiQ', name: 'HBO', region: 'international' as const },
+  { id: 'UChBBWt5H8uZM0XNfE43MpJA', name: 'Apple TV', region: 'international' as const },
+  { id: 'UCF9imwPMSGz4hkFFKHptr5A', name: 'Paramount Pictures', region: 'international' as const },
+  { id: 'UCPDwIDYontBgttYnB5qgJkw', name: '20th Century Studios', region: 'international' as const },
+  { id: 'UC4gQ8i3FNsUOEGgbdqVhjhg', name: 'Amazon Prime Video', region: 'international' as const },
 ];
 
 interface YouTubeSearchItem {
