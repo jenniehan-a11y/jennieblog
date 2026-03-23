@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { Trailer } from '@/types/trailer';
 import Header from './layout/Header';
-import FilterBar from './filter/FilterBar';
 import TrailerCard from './trailer/TrailerCard';
 import TrailerModal from './trailer/TrailerModal';
 
@@ -40,7 +39,6 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
   return (
     <>
       <Header onFilter={setFilter} />
-      <FilterBar onFilter={setFilter} activeLabel={activeLabel} />
 
       <div className="max-w-[1440px] mx-auto pt-10 pb-32 space-y-24">
         {/* 히어로: 자동재생 (필터 없을 때만) */}
