@@ -9,16 +9,18 @@ const CHANNELS = [
   { id: 'UCiEEF51uRAeZeCo8CJFhGWw', name: '넷플릭스 코리아', region: 'domestic' as const },
   { id: 'UCjn-VbcIkAeXQKCmLJV8YwQ', name: '쿠팡플레이', region: 'domestic' as const },
   { id: 'UC9w-h_ciMmX64TcLRcb1xPg', name: 'tvN DRAMA', region: 'domestic' as const },
-  { id: 'UC1gxHEm3JwMwaB1YqpjDSwA', name: '티빙', region: 'domestic' as const },
-  { id: 'UCt4jGMWMwMZMbqaFKkp4GQg', name: '디즈니+ 코리아', region: 'domestic' as const },
+  { id: 'UCNIiH_4ArJNd_cDZApZ7AFg', name: '티빙', region: 'domestic' as const },
+  { id: 'UCbv7Dcn5iNrAyd3GwgVHkIQ', name: 'Disney Korea', region: 'domestic' as const },
   { id: 'UCqMxSHOEbn-f5nVCuDW5YbA', name: '웨이브', region: 'domestic' as const },
-  { id: 'UCbvhmRig-3AONuGXJCRpirg', name: 'JTBC Drama', region: 'domestic' as const },
+  { id: 'UCkbJc8jMcTXwhtmN5VMwfXg', name: 'JTBC Drama', region: 'domestic' as const },
+  { id: 'UCcOYEm78CpaZQvPE6LtoSeA', name: 'SBS', region: 'domestic' as const },
   { id: 'UCaKod3X1Tn4c7Ci0iUKcvzQ', name: '왓챠', region: 'domestic' as const },
-  // 해외 스튜디오
+  { id: 'UCw0LjEsFRJCM0aIUZlYFHBQ', name: 'CJ ENM', region: 'domestic' as const },
+  // 해외 스튜디오/OTT
+  { id: 'UCWOA1ZGywLbqmigxE4Qlvuw', name: 'Netflix', region: 'international' as const },
   { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
   { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
   { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
-  { id: 'UCynfGRBFmWjZ3g62OBVIzVQ', name: 'Netflix', region: 'international' as const },
   { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
   { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
 ];
@@ -65,8 +67,11 @@ const excludeWords = [
 
 function isTrailerTitle(title: string): boolean {
   const lower = title.toLowerCase();
-  // 예고편/trailer/예고 가 들어있어야 함
-  const isTrailer = lower.includes('trailer') || lower.includes('예고편') || lower.includes('예고');
+  // 예고편 관련 키워드
+  const isTrailer = lower.includes('trailer') || lower.includes('예고편') || lower.includes('예고')
+    || lower.includes('공식 발표') || lower.includes('announcement')
+    || lower.includes('티저') || lower.includes('teaser')
+    || lower.includes('coming soon') || lower.includes('first look');
   if (!isTrailer) return false;
   // 제외 목록 체크
   const isExcluded = excludeWords.some(w => lower.includes(w));
@@ -81,7 +86,7 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
     const params = new URLSearchParams({
       part: 'snippet',
       playlistId,
-      maxResults: '30',
+      maxResults: '50',
       key: YOUTUBE_API_KEY,
     });
 
