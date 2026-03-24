@@ -184,7 +184,7 @@ function isValidTrailer(v: TMDBVideo): boolean {
   if (v.type !== 'Trailer' && v.type !== 'Teaser') return false;
   const name = v.name.toLowerCase();
   const excluded = [
-    '리뷰', 'review', '30초', '15초', 'shorts',
+    '리뷰', 'review', '10초', '15초', '30초', 'shorts',
     '하이라이트', 'highlight', '비하인드', 'behind', '메이킹', 'making',
     '리액션', 'reaction', '인터뷰', 'interview', '요약', 'recap',
     '해설', 'explain', 'featurette', '명장면', '스페셜',

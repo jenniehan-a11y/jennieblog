@@ -41,7 +41,7 @@ const excludeWords = [
   // 리뷰/리액션
   '리뷰', 'review', '리액션', 'reaction',
   // 짧은 영상
-  '30초', '15초', 'shorts',
+  '10초', '15초', '30초', 'shorts',
   // 비하인드/메이킹
   '비하인드', 'behind', '메이킹', 'making',
   // 하이라이트/명장면
