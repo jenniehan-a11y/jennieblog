@@ -180,8 +180,8 @@ const LANGUAGE_TO_COUNTRY: Record<string, string> = {
 // 예고편 아닌 영상 제외 필터
 function isValidTrailer(v: TMDBVideo): boolean {
   if (v.site !== 'YouTube') return false;
-  // Trailer + Teaser 허용
-  if (v.type !== 'Trailer' && v.type !== 'Teaser') return false;
+  // TMDB에서는 Trailer 타입만 (Teaser는 보통 30초 짧은 영상)
+  if (v.type !== 'Trailer') return false;
   const name = v.name.toLowerCase();
   const excluded = [
     '리뷰', 'review', '10초', '15초', '30초', 'shorts',
