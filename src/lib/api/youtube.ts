@@ -7,6 +7,7 @@ const YOUTUBE_BASE = 'https://www.googleapis.com/youtube/v3';
 const CHANNELS = [
   // 해외 먼저 (해외 콘텐츠는 영어 버전 우선)
   { id: 'UCWOA1ZGywLbqmigxE4Qlvuw', name: 'Netflix', region: 'international' as const },
+  { id: 'UCpiCK8c6PBktcxq7Az_t4RQ', name: 'Netflix K-Content', region: 'domestic' as const },
   { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
   { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
   { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
