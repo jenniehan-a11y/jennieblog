@@ -49,9 +49,21 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
     setSearching(true);
     setFilter(null);
     try {
+      // 사이트 내 예고편 검색 (YouTube 소스 포함)
+      const q = query.toLowerCase();
+      const localResults = initialTrailers.filter(t =>
+        t.title.toLowerCase().includes(q) ||
+        t.titleOriginal.toLowerCase().includes(q)
+      );
+
+      // TMDB 검색 (사이트에 없는 예고편도 찾기)
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      setSearchResults(data);
+      const tmdbResults = await res.json();
+
+      // 합치고 중복 제거
+      const seenIds = new Set(localResults.map((t: { youtubeId: string }) => t.youtubeId));
+      const combined = [...localResults, ...tmdbResults.filter((t: { youtubeId: string }) => !seenIds.has(t.youtubeId))];
+      setSearchResults(combined);
     } catch {
       setSearchResults([]);
     }

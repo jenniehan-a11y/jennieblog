@@ -64,6 +64,7 @@ const excludeWords = [
   '팬미팅', 'fan meeting', '라이브', 'live performance',
   // 예능
   '예능', 'variety', '관찰카메라', '나혼자산다', '놀면뭐하니', '런닝맨',
+  '나혼자', '프린스', '건물주', '대탈출', '신서유기', '게임쇼', '토크쇼',
   // 기타
   'featurette',
 ];
