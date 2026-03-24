@@ -191,7 +191,7 @@ function isValidTrailer(v: TMDBVideo): boolean {
     '캐릭터 영상', 'character video', '본편', '무삭제', 'deleted scene',
     '선공개', 'sneak peek', '엔딩 크레딧',
     'ost', '뮤직비디오', 'music video',
-    '공연', '콘서트', 'concert', '뮤지컬', 'musical', '팬미팅',
+    '공연', '콘서트', 'concert', '뮤지컬', 'musical', '팬미팅', '예능', 'variety',
   ];
   return !excluded.some(word => name.includes(word));
 }
@@ -543,16 +543,22 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
   // 중복 제거
   const seenTmdb = new Set<string>();
   const seenYt = new Set<string>();
+  const seenTitle = new Set<string>();
   const unique = all.filter((t) => {
     // youtubeId 중복 체크
     if (seenYt.has(t.youtubeId)) return false;
     seenYt.add(t.youtubeId);
-    // TMDB 소스는 같은 작품 1개만 (YouTube 소스는 tmdbId 없으므로 스킵)
+    // TMDB 소스는 같은 작품 1개만
     if (t.tmdbId) {
       const tmdbKey = `${t.contentType}-${t.tmdbId}`;
       if (seenTmdb.has(tmdbKey)) return false;
       seenTmdb.add(tmdbKey);
     }
+    // 같은 제목의 한국/해외 중복 제거 (브리저튼 등)
+    // 단, 넷플릭스 소스는 우선 유지
+    const titleKey = t.title.replace(/\s+/g, '').toLowerCase();
+    if (seenTitle.has(titleKey)) return false;
+    seenTitle.add(titleKey);
     return true;
   });
 

@@ -58,9 +58,11 @@ const excludeWords = [
   '선공개', 'sneak peek', '엔딩 크레딧',
   // OST/뮤직비디오
   'ost', '뮤직비디오', 'music video',
-  // 공연/콘서트/뮤지컬 (공연 예고편 제외)
+  // 공연/콘서트/뮤지컬
   '공연', '콘서트', 'concert', '뮤지컬', 'musical', '내한', '페스티벌', 'festival',
   '팬미팅', 'fan meeting', '라이브', 'live performance',
+  // 예능
+  '예능', 'variety', '관찰카메라', '나혼자산다', '놀면뭐하니', '런닝맨',
   // 기타
   'featurette',
 ];
