@@ -62,7 +62,7 @@ const excludeWords = [
   '공연', '콘서트', 'concert', '뮤지컬', 'musical', '내한', '페스티벌', 'festival',
   '팬미팅', 'fan meeting', '라이브', 'live performance',
   // 기타
-  '스페셜', 'featurette',
+  'featurette',
 ];
 
 function isTrailerTitle(title: string): boolean {

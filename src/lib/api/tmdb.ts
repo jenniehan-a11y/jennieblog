@@ -540,14 +540,19 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     ...youtubeTrailers,
   ];
 
-  // 중복 제거 (같은 작품은 1개만)
+  // 중복 제거
   const seenTmdb = new Set<string>();
   const seenYt = new Set<string>();
   const unique = all.filter((t) => {
-    const tmdbKey = `${t.contentType}-${t.tmdbId}`;
-    if (seenTmdb.has(tmdbKey) || seenYt.has(t.youtubeId)) return false;
-    seenTmdb.add(tmdbKey);
+    // youtubeId 중복 체크
+    if (seenYt.has(t.youtubeId)) return false;
     seenYt.add(t.youtubeId);
+    // TMDB 소스는 같은 작품 1개만 (YouTube 소스는 tmdbId 없으므로 스킵)
+    if (t.tmdbId) {
+      const tmdbKey = `${t.contentType}-${t.tmdbId}`;
+      if (seenTmdb.has(tmdbKey)) return false;
+      seenTmdb.add(tmdbKey);
+    }
     return true;
   });
 
