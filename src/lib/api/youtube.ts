@@ -18,6 +18,7 @@ const CHANNELS = [
   { id: 'UC9w-h_ciMmX64TcLRcb1xPg', name: 'tvN DRAMA', region: 'domestic' as const },
   { id: 'UCNIiH_4ArJNd_cDZApZ7AFg', name: '티빙', region: 'domestic' as const },
   { id: 'UCbv7Dcn5iNrAyd3GwgVHkIQ', name: 'Disney Korea', region: 'domestic' as const },
+  { id: 'UCtdz9LWNNQKUg4Xpma_40Ug', name: '디즈니+ 코리아', region: 'domestic' as const },
   { id: 'UCqMxSHOEbn-f5nVCuDW5YbA', name: '웨이브', region: 'domestic' as const },
   { id: 'UCkbJc8jMcTXwhtmN5VMwfXg', name: 'JTBC Drama', region: 'domestic' as const },
   { id: 'UCcOYEm78CpaZQvPE6LtoSeA', name: 'SBS', region: 'domestic' as const },
