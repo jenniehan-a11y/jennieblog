@@ -108,7 +108,15 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
     const items: YouTubePlaylistItem[] = data.items || [];
 
     return items
-      .filter(item => isTrailerTitle(item.snippet.title, channel.name.includes('넷플릭스') || channel.name.includes('Netflix')))
+      .filter(item => {
+        if (!isTrailerTitle(item.snippet.title, channel.name.includes('넷플릭스') || channel.name.includes('Netflix'))) return false;
+        // 넷플릭스 코리아: 한글이 포함된 한국 콘텐츠만 (해외 콘텐츠는 글로벌 채널에서)
+        if (channel.name === '넷플릭스 코리아') {
+          const hasKorean = /[가-힣]/.test(item.snippet.title.replace(/넷플릭스|공식|예고편|시즌|티저/g, ''));
+          return hasKorean;
+        }
+        return true;
+      })
       .map(item => {
         const videoId = item.snippet.resourceId.videoId;
         return {
