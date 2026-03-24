@@ -192,6 +192,7 @@ function isValidTrailer(v: TMDBVideo): boolean {
     '선공개', 'sneak peek', '엔딩 크레딧',
     'ost', '뮤직비디오', 'music video',
     '공연', '콘서트', 'concert', '뮤지컬', 'musical', '팬미팅', '예능', 'variety',
+    'first look', 'sneak peek', 'clip', '명장면',
   ];
   return !excluded.some(word => name.includes(word));
 }

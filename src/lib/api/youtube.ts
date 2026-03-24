@@ -5,6 +5,13 @@ const YOUTUBE_BASE = 'https://www.googleapis.com/youtube/v3';
 
 // 공식 유튜브 채널
 const CHANNELS = [
+  // 해외 먼저 (해외 콘텐츠는 영어 버전 우선)
+  { id: 'UCWOA1ZGywLbqmigxE4Qlvuw', name: 'Netflix', region: 'international' as const },
+  { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
+  { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
+  { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
+  { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
+  { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
   // 한국 OTT/방송사
   { id: 'UCiEEF51uRAeZeCo8CJFhGWw', name: '넷플릭스 코리아', region: 'domestic' as const },
   { id: 'UCjn-VbcIkAeXQKCmLJV8YwQ', name: '쿠팡플레이', region: 'domestic' as const },
@@ -16,13 +23,6 @@ const CHANNELS = [
   { id: 'UCcOYEm78CpaZQvPE6LtoSeA', name: 'SBS', region: 'domestic' as const },
   { id: 'UCaKod3X1Tn4c7Ci0iUKcvzQ', name: '왓챠', region: 'domestic' as const },
   { id: 'UCw0LjEsFRJCM0aIUZlYFHBQ', name: 'CJ ENM', region: 'domestic' as const },
-  // 해외 스튜디오/OTT
-  { id: 'UCWOA1ZGywLbqmigxE4Qlvuw', name: 'Netflix', region: 'international' as const },
-  { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
-  { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
-  { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
-  { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
-  { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
 ];
 
 interface YouTubePlaylistItem {
@@ -76,7 +76,7 @@ function isTrailerTitle(title: string, isNetflix: boolean = false): boolean {
   const isTrailer = lower.includes('trailer') || lower.includes('예고편') || lower.includes('예고')
     || lower.includes('공식 발표') || lower.includes('announcement')
     || lower.includes('티저') || lower.includes('teaser')
-    || lower.includes('coming soon') || lower.includes('first look');
+    || lower.includes('coming soon');
   if (!isTrailer) return false;
   // 제외 목록 체크 (넷플릭스는 예능 허용)
   const activeExcludes = isNetflix
