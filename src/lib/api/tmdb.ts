@@ -177,17 +177,22 @@ const LANGUAGE_TO_COUNTRY: Record<string, string> = {
   da: 'DK', no: 'NO',
 };
 
-// 리뷰, 30초, 비하인드 등 제외 필터
+// 예고편 아닌 영상 제외 필터
 function isValidTrailer(v: TMDBVideo): boolean {
-  if (v.site !== 'YouTube' || v.type !== 'Trailer') return false;
+  if (v.site !== 'YouTube') return false;
+  // Trailer + Teaser 허용
+  if (v.type !== 'Trailer' && v.type !== 'Teaser') return false;
   const name = v.name.toLowerCase();
-  const excluded = ['리뷰', 'review', '30초', '15초', '숏츠', 'shorts',
+  const excluded = [
+    '리뷰', 'review', '30초', '15초', 'shorts',
     '하이라이트', 'highlight', '비하인드', 'behind', '메이킹', 'making',
     '리액션', 'reaction', '인터뷰', 'interview', '요약', 'recap',
-    '해설', 'explain', 'featurette', 'clip', '명장면', '스페셜',
-    '캐릭터', 'character', '본편', '무삭제', 'deleted', 'scene',
-    '선공개', 'sneak', 'peek', 'opening', '엔딩', 'ending',
-    'ost', '뮤직비디오', 'music video', 'mv'];
+    '해설', 'explain', 'featurette', '명장면', '스페셜',
+    '캐릭터 영상', 'character video', '본편', '무삭제', 'deleted scene',
+    '선공개', 'sneak peek', '엔딩 크레딧',
+    'ost', '뮤직비디오', 'music video',
+    '공연', '콘서트', 'concert', '뮤지컬', 'musical', '팬미팅',
+  ];
   return !excluded.some(word => name.includes(word));
 }
 

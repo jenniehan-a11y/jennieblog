@@ -3,7 +3,7 @@ import { Trailer } from '@/types/trailer';
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || '';
 const YOUTUBE_BASE = 'https://www.googleapis.com/youtube/v3';
 
-// 공식 유튜브 채널 — 핵심만 (쿼터 절약)
+// 공식 유튜브 채널
 const CHANNELS = [
   // 한국 OTT/방송사
   { id: 'UCiEEF51uRAeZeCo8CJFhGWw', name: '넷플릭스 코리아', region: 'domestic' as const },
@@ -32,25 +32,47 @@ interface YouTubePlaylistItem {
   };
 }
 
-// 채널의 업로드 재생목록 ID = UC를 UU로 변경
 function getUploadsPlaylistId(channelId: string): string {
   return 'UU' + channelId.substring(2);
 }
 
-const excludeWords = ['리뷰', 'review', '30초', '15초', 'shorts', 'highlight', '하이라이트',
-  'behind', '비하인드', 'making', '메이킹', 'reaction', '리액션', 'interview', '인터뷰',
-  'recap', '요약', 'explain', '해설', 'character', '캐릭터', '본편', '무삭제', 'deleted',
-  'scene', '선공개', 'sneak', 'peek', 'opening', '엔딩', 'ending', 'ost', '뮤직비디오',
-  'music video', '명장면', '스페셜', 'featurette', 'clip', 'teaser', '티저'];
+// 예고편이 아닌 콘텐츠 제외 (티저 예고편은 포함!)
+const excludeWords = [
+  // 리뷰/리액션
+  '리뷰', 'review', '리액션', 'reaction',
+  // 짧은 영상
+  '30초', '15초', 'shorts',
+  // 비하인드/메이킹
+  '비하인드', 'behind', '메이킹', 'making',
+  // 하이라이트/명장면
+  '하이라이트', 'highlight', '명장면',
+  // 인터뷰/해설
+  '인터뷰', 'interview', '해설', 'explain',
+  // 요약
+  '요약', 'recap',
+  // 캐릭터/본편
+  '캐릭터 영상', 'character video', '본편', '무삭제', 'deleted',
+  // 선공개/엔딩
+  '선공개', 'sneak peek', '엔딩 크레딧',
+  // OST/뮤직비디오
+  'ost', '뮤직비디오', 'music video',
+  // 공연/콘서트/뮤지컬 (공연 예고편 제외)
+  '공연', '콘서트', 'concert', '뮤지컬', 'musical', '내한', '페스티벌', 'festival',
+  '팬미팅', 'fan meeting', '라이브', 'live performance',
+  // 기타
+  '스페셜', 'featurette',
+];
 
 function isTrailerTitle(title: string): boolean {
   const lower = title.toLowerCase();
+  // 예고편/trailer/예고 가 들어있어야 함
   const isTrailer = lower.includes('trailer') || lower.includes('예고편') || lower.includes('예고');
+  if (!isTrailer) return false;
+  // 제외 목록 체크
   const isExcluded = excludeWords.some(w => lower.includes(w));
-  return isTrailer && !isExcluded;
+  return !isExcluded;
 }
 
-// playlistItems API 사용 (1유닛) — search API (100유닛)보다 훨씬 절약
 async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Trailer[]> {
   if (!YOUTUBE_API_KEY) return [];
 
@@ -82,7 +104,9 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
             .replace(/\s*[\|\-]\s*Official Trailer.*/i, '')
             .replace(/\s*Official Trailer.*/i, '')
             .replace(/\s*[\|\-]\s*공식 예고편.*/i, '')
+            .replace(/\s*공식 예고편.*/i, '')
             .replace(/\s*메인 예고편.*/i, '')
+            .replace(/\s*티저 예고편.*/i, '')
             .trim() || item.snippet.title,
           titleOriginal: item.snippet.title,
           year: new Date(item.snippet.publishedAt).getFullYear(),
@@ -111,7 +135,6 @@ export async function fetchYouTubeTrailers(): Promise<Trailer[]> {
   const results = await Promise.all(CHANNELS.map(fetchChannelTrailers));
   const all = results.flat();
 
-  // youtubeId 기준 중복 제거
   const seen = new Set<string>();
   return all.filter(t => {
     if (seen.has(t.youtubeId)) return false;
