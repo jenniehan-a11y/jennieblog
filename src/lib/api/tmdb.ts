@@ -205,7 +205,6 @@ function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: strin
   const sorted = youtubeVideos.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   const best = sorted.slice(0, 1);
 
-  // 해외 작품은 원제(영어) 사용
   const isKoreanContent = movie.original_language === 'ko';
   const displayTitle = isKoreanContent ? (movie.title || movie.original_title) : movie.original_title;
 
@@ -554,14 +553,14 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
   const seenYt = new Set<string>();
   const seenNorm = new Set<string>();
 
-  function normalizeTitle(title: string): string {
-    return title
-      .toLowerCase()
-      .replace(/[:\-|#'"]/g, ' ')
-      .replace(/\s*(official|trailer|teaser|예고편|예고|공식|발표|시즌|season|ep\.?\d*|#?\d+차|메인|파이널|final|announcement|documentary|new|tomorrow|event|for|the|a|at|in|\(\d{4}\)|\d{4})\s*/gi, ' ')
-      .replace(/[^a-z가-힣\s]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+  // 제목에서 영문 고유명사 키 추출 (3글자 이상 영문 단어)
+  function extractKey(title: string): string {
+    const lower = title.toLowerCase();
+    const words = lower
+      .replace(/[:\-|#'"()[\]]/g, ' ')
+      .replace(/\b(official|trailer|teaser|예고편|예고|공식|발표|시즌|season|ep\d*|차|메인|파이널|final|announcement|documentary|new|tomorrow|event|the|a|at|in|of|and|for|eng|sub|netflix|2026|2025|2024)\b/gi, '')
+      .match(/[a-z]{3,}/g) || [];
+    return words.sort().join(' ');
   }
 
   const unique = all.filter((t) => {
@@ -574,12 +573,15 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
       if (seenTmdb.has(tmdbKey)) return false;
       seenTmdb.add(tmdbKey);
     }
-    // 정규화된 제목으로 한국어/영어 중복 제거
-    // title과 titleOriginal 둘 다 등록하고, 어느 쪽이든 이미 있으면 중복
-    const norms = [normalizeTitle(t.title), normalizeTitle(t.titleOriginal)].filter(Boolean);
-    const isDup = norms.some(n => seenNorm.has(n));
-    if (isDup) return false;
-    norms.forEach(n => seenNorm.add(n));
+    // 영문 고유명사 기반 중복 제거
+    const key = extractKey(t.title) || extractKey(t.titleOriginal);
+    if (key && key.length >= 3) {
+      // 기존 키 중 하나라도 포함 관계면 중복
+      for (const seen of seenNorm) {
+        if (key.includes(seen) || seen.includes(key)) return false;
+      }
+      seenNorm.add(key);
+    }
     return true;
   });
 
