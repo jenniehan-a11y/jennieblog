@@ -67,7 +67,10 @@ const excludeWords = [
   'featurette',
 ];
 
-function isTrailerTitle(title: string): boolean {
+// 예능 관련 제외 키워드 (넷플릭스는 예외)
+const varietyWords = ['예능', 'variety', '관찰카메라', '나혼자산다', '놀면뭐하니', '런닝맨'];
+
+function isTrailerTitle(title: string, isNetflix: boolean = false): boolean {
   const lower = title.toLowerCase();
   // 예고편 관련 키워드
   const isTrailer = lower.includes('trailer') || lower.includes('예고편') || lower.includes('예고')
@@ -75,8 +78,11 @@ function isTrailerTitle(title: string): boolean {
     || lower.includes('티저') || lower.includes('teaser')
     || lower.includes('coming soon') || lower.includes('first look');
   if (!isTrailer) return false;
-  // 제외 목록 체크
-  const isExcluded = excludeWords.some(w => lower.includes(w));
+  // 제외 목록 체크 (넷플릭스는 예능 허용)
+  const activeExcludes = isNetflix
+    ? excludeWords.filter(w => !varietyWords.includes(w))
+    : excludeWords;
+  const isExcluded = activeExcludes.some(w => lower.includes(w));
   return !isExcluded;
 }
 
@@ -102,7 +108,7 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
     const items: YouTubePlaylistItem[] = data.items || [];
 
     return items
-      .filter(item => isTrailerTitle(item.snippet.title))
+      .filter(item => isTrailerTitle(item.snippet.title, channel.name.includes('넷플릭스') || channel.name.includes('Netflix')))
       .map(item => {
         const videoId = item.snippet.resourceId.videoId;
         return {
