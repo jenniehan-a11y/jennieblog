@@ -1,7 +1,7 @@
 import { fetchAllTrailers } from '@/lib/api/tmdb';
 import TrailerExplorer from '@/components/TrailerExplorer';
 
-export const revalidate = 86400;
+export const revalidate = 21600; // 6시간마다 자동 업데이트
 
 export default async function Home() {
   let trailers: Awaited<ReturnType<typeof fetchAllTrailers>> = [];
