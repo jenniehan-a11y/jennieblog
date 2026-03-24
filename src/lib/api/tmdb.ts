@@ -137,36 +137,28 @@ function mapTrailerType(type: string): Trailer['trailerType'] {
 
 // 해외 작품은 원어 버전, 국내 작품은 한국어 버전 예고편
 async function getMovieVideos(movieId: number, originalLanguage: string): Promise<TMDBVideo[]> {
-  const isKorean = originalLanguage === 'ko';
-
-  if (isKorean) {
-    // 국내: 한국어 먼저, 없으면 영어
+  if (originalLanguage === 'ko') {
+    // 국내: 한국어만
     const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'ko-KR' });
     if (data.results.length > 0) return data.results;
     const en = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'en-US' });
     return en.results;
   } else {
-    // 해외: 영어(원어) 먼저, 없으면 한국어
+    // 해외: 영어만 (한국어 번역본 절대 안 가져옴)
     const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'en-US' });
-    if (data.results.length > 0) return data.results;
-    const ko = await tmdbFetch<{ results: TMDBVideo[] }>(`/movie/${movieId}/videos`, { language: 'ko-KR' });
-    return ko.results;
+    return data.results;
   }
 }
 
 async function getTVVideos(tvId: number, originalLanguage: string): Promise<TMDBVideo[]> {
-  const isKorean = originalLanguage === 'ko';
-
-  if (isKorean) {
+  if (originalLanguage === 'ko') {
     const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'ko-KR' });
     if (data.results.length > 0) return data.results;
     const en = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'en-US' });
     return en.results;
   } else {
     const data = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'en-US' });
-    if (data.results.length > 0) return data.results;
-    const ko = await tmdbFetch<{ results: TMDBVideo[] }>(`/tv/${tvId}/videos`, { language: 'ko-KR' });
-    return ko.results;
+    return data.results;
   }
 }
 
@@ -198,7 +190,12 @@ function isValidTrailer(v: TMDBVideo): boolean {
 }
 
 function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: string[] = []): Trailer[] {
-  const youtubeVideos = videos.filter(isValidTrailer);
+  let youtubeVideos = videos.filter(isValidTrailer);
+
+  // 해외 작품: 한국어 더빙/번역 예고편 제외, 영어 원본만
+  if (movie.original_language !== 'ko') {
+    youtubeVideos = youtubeVideos.filter(v => !/[가-힣]/.test(v.name));
+  }
 
   const country = movie.origin_country?.[0] || LANGUAGE_TO_COUNTRY[movie.original_language] || 'US';
   const year = movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : 0;
@@ -208,9 +205,13 @@ function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: strin
   const sorted = youtubeVideos.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   const best = sorted.slice(0, 1);
 
+  // 해외 작품은 원제(영어) 사용
+  const isKoreanContent = movie.original_language === 'ko';
+  const displayTitle = isKoreanContent ? (movie.title || movie.original_title) : movie.original_title;
+
   return best.map((video) => ({
     id: `movie-${movie.id}-${video.id}`,
-    title: movie.title || movie.original_title,
+    title: displayTitle,
     titleOriginal: movie.original_title,
     year,
     releaseDate: movie.release_date || '',
@@ -230,7 +231,11 @@ function movieToTrailers(movie: TMDBMovie, videos: TMDBVideo[], platforms: strin
 }
 
 function tvToTrailers(show: TMDBTVShow, videos: TMDBVideo[], platforms: string[] = []): Trailer[] {
-  const youtubeVideos = videos.filter(isValidTrailer);
+  let youtubeVideos = videos.filter(isValidTrailer);
+
+  if (show.original_language !== 'ko') {
+    youtubeVideos = youtubeVideos.filter(v => !/[가-힣]/.test(v.name));
+  }
 
   const country = show.origin_country?.[0] || LANGUAGE_TO_COUNTRY[show.original_language] || 'US';
   const year = show.first_air_date ? parseInt(show.first_air_date.substring(0, 4)) : 0;
@@ -243,9 +248,12 @@ function tvToTrailers(show: TMDBTVShow, videos: TMDBVideo[], platforms: string[]
   const sorted = youtubeVideos.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   const best = sorted.slice(0, 1);
 
+  const isKoreanShow = show.original_language === 'ko';
+  const displayName = isKoreanShow ? (show.name || show.original_name) : show.original_name;
+
   return best.map((video) => ({
     id: `tv-${show.id}-${video.id}`,
-    title: show.name || show.original_name,
+    title: displayName,
     titleOriginal: show.original_name,
     year,
     releaseDate: show.first_air_date || '',
@@ -541,25 +549,37 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     ...youtubeTrailers,
   ];
 
-  // 중복 제거
+  // 중복 제거 — 같은 작품은 1개만 (해외 버전 우선)
   const seenTmdb = new Set<string>();
   const seenYt = new Set<string>();
-  const seenTitle = new Set<string>();
+  const seenNorm = new Set<string>();
+
+  function normalizeTitle(title: string): string {
+    return title
+      .toLowerCase()
+      .replace(/[:\-|#'"]/g, ' ')
+      .replace(/\s*(official|trailer|teaser|예고편|예고|공식|발표|시즌|season|ep\.?\d*|#?\d+차|메인|파이널|final|announcement|documentary|new|tomorrow|event|for|the|a|at|in|\(\d{4}\)|\d{4})\s*/gi, ' ')
+      .replace(/[^a-z가-힣\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   const unique = all.filter((t) => {
-    // youtubeId 중복 체크
+    // youtubeId 중복
     if (seenYt.has(t.youtubeId)) return false;
     seenYt.add(t.youtubeId);
-    // TMDB 소스는 같은 작품 1개만
+    // TMDB 소스: tmdbId 기준 1개만
     if (t.tmdbId) {
-      const tmdbKey = `${t.contentType}-${t.tmdbId}`;
+      const tmdbKey = `${t.tmdbId}`;
       if (seenTmdb.has(tmdbKey)) return false;
       seenTmdb.add(tmdbKey);
     }
-    // 같은 제목의 한국/해외 중복 제거 (브리저튼 등)
-    // 단, 넷플릭스 소스는 우선 유지
-    const titleKey = t.title.replace(/\s+/g, '').toLowerCase();
-    if (seenTitle.has(titleKey)) return false;
-    seenTitle.add(titleKey);
+    // 정규화된 제목으로 한국어/영어 중복 제거
+    // title과 titleOriginal 둘 다 등록하고, 어느 쪽이든 이미 있으면 중복
+    const norms = [normalizeTitle(t.title), normalizeTitle(t.titleOriginal)].filter(Boolean);
+    const isDup = norms.some(n => seenNorm.has(n));
+    if (isDup) return false;
+    norms.forEach(n => seenNorm.add(n));
     return true;
   });
 
