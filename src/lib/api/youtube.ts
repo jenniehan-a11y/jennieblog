@@ -9,7 +9,7 @@ const CHANNELS = [
   { id: 'UCWOA1ZGywLbqmigxE4Qlvuw', name: 'Netflix', region: 'international' as const },
   { id: 'UCpiCK8c6PBktcxq7Az_t4RQ', name: 'Netflix K-Content', region: 'domestic' as const },
   { id: 'UCjmJDM5pRKbUlVIzDYYWb6g', name: 'Warner Bros', region: 'international' as const },
-  { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Universal Pictures', region: 'international' as const },
+  { id: 'UCq0OueAsdxH6b8nyAspwViw', name: 'Universal Pictures', region: 'international' as const },
   { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
   { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
   { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
@@ -69,10 +69,12 @@ const excludeWords = [
   // 회차별 예고 (에피소드 예고)
   '회 예고', '화 예고', '회예고', '화예고', '회 예고편', '화 예고편',
   // 숏폼/클립 (해시태그로 시작하는 짧은 클립)
-  // 특별 발표/이벤트
-  'special announcement',
+  // 특별 발표/이벤트/기념
+  'special announcement', '기념', 'anniversary', '20주년', '10주년',
+  // 스페셜 (기념 스페셜, 스페셜 티저 등)
+  '스페셜',
   // 기타
-  'featurette',
+  'featurette', 'coming soon',
 ];
 
 // 예능 관련 제외 키워드 (넷플릭스는 예외)
