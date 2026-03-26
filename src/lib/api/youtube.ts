@@ -66,6 +66,11 @@ const excludeWords = [
   // 예능
   '예능', 'variety', '관찰카메라', '나혼자산다', '놀면뭐하니', '런닝맨',
   '나혼자', '프린스', '건물주', '대탈출', '신서유기', '게임쇼', '토크쇼',
+  // 회차별 예고 (에피소드 예고)
+  '회 예고', '화 예고', '회예고', '화예고', '회 예고편', '화 예고편',
+  // 숏폼/클립 (해시태그로 시작하는 짧은 클립)
+  // 특별 발표/이벤트
+  'special announcement',
   // 기타
   'featurette',
 ];
@@ -75,12 +80,20 @@ const varietyWords = ['예능', 'variety', '관찰카메라', '나혼자산다',
 
 function isTrailerTitle(title: string, isNetflix: boolean = false): boolean {
   const lower = title.toLowerCase();
+
+  // 해시태그 클립 제외 (숏폼)
+  if (title.includes('#') && !lower.includes('trailer') && !lower.includes('예고편')) return false;
+
+  // 회차/날짜별 예고 제외: "3회 예고", "9화 예고", "3월 29일 예고" 등
+  if (/\d+회\s*예고|\d+화\s*예고|\d+월\s*\d+일\s*예고/.test(title)) return false;
+
   // 예고편 관련 키워드
   const isTrailer = lower.includes('trailer') || lower.includes('예고편') || lower.includes('예고')
     || lower.includes('공식 발표') || lower.includes('announcement')
     || lower.includes('티저') || lower.includes('teaser')
     || lower.includes('coming soon');
   if (!isTrailer) return false;
+
   // 제외 목록 체크 (넷플릭스는 예능 허용)
   const activeExcludes = isNetflix
     ? excludeWords.filter(w => !varietyWords.includes(w))
