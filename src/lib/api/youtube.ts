@@ -13,6 +13,7 @@ const CHANNELS = [
   { id: 'UCuPivVjnfNo4mb3Oog_frZg', name: 'A24', region: 'international' as const },
   { id: 'UC_IRYSp4auq7hKLiRDGSzgg', name: 'Walt Disney Studios', region: 'international' as const },
   { id: 'UCnc6db-y3IU7CkT_yeVXdVg', name: 'Sony Pictures', region: 'international' as const },
+  { id: 'UCx-KWLTKlB83hDI6UKECtJQ', name: 'HBO Max', region: 'international' as const },
   // 한국 OTT/방송사 (넷플릭스 코리아는 글로벌과 중복되므로 제외, 한국 오리지널은 TMDB에서)
   { id: 'UCjn-VbcIkAeXQKCmLJV8YwQ', name: '쿠팡플레이', region: 'domestic' as const },
   { id: 'UC9w-h_ciMmX64TcLRcb1xPg', name: 'tvN DRAMA', region: 'domestic' as const },
