@@ -74,6 +74,8 @@ const excludeWords = [
   'special announcement', '기념', 'anniversary', '20주년', '10주년',
   // 스페셜 (기념 스페셜, 스페셜 티저 등)
   '스페셜',
+  // 교양/다큐/시사
+  '궁금한 이야기', '그것이 알고싶다', '다큐', 'documentary', '시사',
   // 기타
   'featurette',
 ];
