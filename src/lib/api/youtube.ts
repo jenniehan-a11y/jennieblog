@@ -76,6 +76,8 @@ const excludeWords = [
   '스페셜',
   // 교양/다큐/시사
   '궁금한 이야기', '그것이 알고싶다', '다큐', 'documentary', '시사',
+  // 홍보/안내 영상
+  'what\'s next', 'watch the trailer',
   // 기타
   'featurette',
 ];
