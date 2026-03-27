@@ -18,7 +18,6 @@ const CHANNELS = [
   { id: 'UCi8e0iOVk1fEOogdfu4YgfA', name: 'Lionsgate Movies', region: 'international' as const },
   { id: 'UCF9imwPMSGz4hkMKLFsFmvg', name: 'Focus Features', region: 'international' as const },
   { id: 'UCgwv23FVv3lqh567yagM9IQ', name: 'Searchlight Pictures', region: 'international' as const },
-  { id: 'UCKy1dAqELo0zrOtPkf0eTMw', name: 'MGM', region: 'international' as const },
   { id: 'UCx-KWLTKlB83hDI6UKECtJQ', name: 'HBO Max', region: 'international' as const },
   // 한국 OTT/방송사 (넷플릭스 코리아는 글로벌과 중복되므로 제외, 한국 오리지널은 TMDB에서)
   { id: 'UCjn-VbcIkAeXQKCmLJV8YwQ', name: '쿠팡플레이', region: 'domestic' as const },
