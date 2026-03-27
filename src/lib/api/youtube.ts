@@ -87,6 +87,8 @@ const excludeWords = [
   'what\'s next', 'watch the trailer',
   // 스팟/세로형 영상
   'spot', '스팟', '#shorts', 'vertical',
+  // 게임
+  'game trailer', 'gameplay', '게임',
   // 기타
   'featurette',
 ];
