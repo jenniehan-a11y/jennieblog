@@ -74,7 +74,7 @@ const excludeWords = [
   // 스페셜 (기념 스페셜, 스페셜 티저 등)
   '스페셜',
   // 기타
-  'featurette', 'coming soon',
+  'featurette',
 ];
 
 // 예능 관련 제외 키워드 (넷플릭스는 예외)
@@ -117,7 +117,7 @@ async function fetchChannelTrailers(channel: typeof CHANNELS[0]): Promise<Traile
     });
 
     const res = await fetch(`${YOUTUBE_BASE}/playlistItems?${params}`, {
-      next: { revalidate: 86400 },
+      next: { revalidate: 21600 },
     });
 
     if (!res.ok) return [];

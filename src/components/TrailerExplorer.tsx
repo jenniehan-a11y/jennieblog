@@ -58,7 +58,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
 
       // TMDB 검색 (사이트에 없는 예고편도 찾기)
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-      const tmdbResults = await res.json();
+      const tmdbResults = res.ok ? await res.json() : [];
 
       // 합치고 중복 제거
       const seenIds = new Set(localResults.map((t: { youtubeId: string }) => t.youtubeId));
@@ -68,7 +68,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
       setSearchResults([]);
     }
     setSearching(false);
-  }, []);
+  }, [initialTrailers]);
 
   const handleSearchClear = useCallback(() => {
     setSearchResults(null);
