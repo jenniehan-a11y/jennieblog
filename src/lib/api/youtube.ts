@@ -85,6 +85,8 @@ const excludeWords = [
   '궁금한 이야기', '그것이 알고싶다', '그것이 알고 싶다', '다큐', 'documentary', '시사',
   // 홍보/안내 영상
   'what\'s next', 'watch the trailer',
+  // 스팟/세로형 영상
+  'spot', '스팟', '#shorts', 'vertical',
   // 기타
   'featurette',
 ];
