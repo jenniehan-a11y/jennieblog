@@ -489,6 +489,48 @@ export async function searchTrailers(query: string): Promise<Trailer[]> {
   return allTrailers;
 }
 
+// YouTube 예고편에 TMDB 장르 매칭
+async function enrichYouTubeGenres(trailers: Trailer[]): Promise<Trailer[]> {
+  const enriched = await Promise.all(
+    trailers.map(async (trailer) => {
+      if (trailer.genres.length > 0) return trailer;
+      try {
+        // 제목에서 작품명 추출 (괄호, 예고편 관련 키워드 제거)
+        const cleanTitle = trailer.title
+          .replace(/\[.*?\]/g, '')
+          .replace(/\(.*?\)/g, '')
+          .replace(/\s*(메인|1차|2차|3차|파이널|티저|예고편|예고|공식|발표|시즌\d*|official|trailer|teaser|announcement|final)\s*/gi, '')
+          .trim();
+        if (!cleanTitle) return trailer;
+
+        const [movieData, tvData] = await Promise.all([
+          tmdbFetch<{ results: TMDBMovie[] }>('/search/movie', { query: cleanTitle }),
+          tmdbFetch<{ results: TMDBTVShow[] }>('/search/tv', { query: cleanTitle }),
+        ]);
+
+        const movie = movieData.results[0];
+        const tv = tvData.results[0];
+
+        if (movie && !tv) {
+          const genres = movie.genre_ids.map((id) => MOVIE_GENRES[id]).filter(Boolean);
+          return { ...trailer, genres };
+        } else if (movie && tv) {
+          // 둘 다 있으면 영화 우선
+          const genres = movie.genre_ids.map((id) => MOVIE_GENRES[id]).filter(Boolean);
+          return { ...trailer, genres };
+        } else if (tv) {
+          const genres = [...new Set(tv.genre_ids.flatMap((id) => TV_GENRE_MAP[id] || []))];
+          return { ...trailer, genres };
+        }
+      } catch {
+        // 매칭 실패해도 원본 유지
+      }
+      return trailer;
+    })
+  );
+  return enriched;
+}
+
 export async function fetchAllTrailers(): Promise<Trailer[]> {
   const [
     popularMovies1,
@@ -525,7 +567,7 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     fetchKoreanDramaTrailers(1),
     fetchKoreanDramaTrailers(2),
     fetchKoreanDramaTrailers(3),
-    fetchYouTubeTrailers(),
+    fetchYouTubeTrailers().then(enrichYouTubeGenres),
   ]);
 
   const all = [

@@ -16,6 +16,9 @@ const MENU_ITEMS = [
   { label: 'Fantasy', value: { genre: '판타지' } },
   { label: 'Mystery', value: { genre: '미스터리' } },
   { label: 'Animation', value: { genre: '애니메이션' } },
+  { label: '—', value: null },
+  { label: 'Korea', value: { region: 'domestic' } },
+  { label: 'International', value: { region: 'international' } },
 ];
 
 interface HeaderProps {
@@ -125,14 +128,18 @@ export default function Header({ onFilter, onSearch, onSearchClear }: HeaderProp
           <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setMenuOpen(false)} />
           <div className="fixed top-14 left-0 right-0 z-50 bg-white border-b border-black/10 shadow-lg max-h-[80vh] overflow-y-auto">
             <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-4">
-              {MENU_ITEMS.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => handleSelect(item)}
-                  className="block w-full text-left py-4 border-b border-black/5 last:border-0 text-2xl font-semibold tracking-[-0.02em] text-black hover:text-black/40 transition-colors"
-                >
-                  {item.label}
-                </button>
+              {MENU_ITEMS.map((item, i) => (
+                item.label === '—' ? (
+                  <div key={`sep-${i}`} className="my-2 border-t border-black/10" />
+                ) : (
+                  <button
+                    key={item.label}
+                    onClick={() => handleSelect(item)}
+                    className="block w-full text-left py-4 border-b border-black/5 last:border-0 text-2xl font-semibold tracking-[-0.02em] text-black hover:text-black/40 transition-colors"
+                  >
+                    {item.label}
+                  </button>
+                )
               ))}
             </div>
           </div>
