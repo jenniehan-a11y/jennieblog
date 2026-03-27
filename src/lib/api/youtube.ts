@@ -24,6 +24,7 @@ const CHANNELS = [
   { id: 'UCkbJc8jMcTXwhtmN5VMwfXg', name: 'JTBC Drama', region: 'domestic' as const },
   { id: 'UCcOYEm78CpaZQvPE6LtoSeA', name: 'SBS', region: 'domestic' as const },
   { id: 'UCaKod3X1Tn4c7Ci0iUKcvzQ', name: '왓챠', region: 'domestic' as const },
+  { id: 'UCFZPGgRaOs9j9BNXXQvVawA', name: '스튜디오지니', region: 'domestic' as const },
   { id: 'UCw0LjEsFRJCM0aIUZlYFHBQ', name: 'CJ ENM', region: 'domestic' as const },
 ];
 
