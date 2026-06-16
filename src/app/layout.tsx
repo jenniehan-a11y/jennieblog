@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jennie Trailer - 예고편 레퍼런스",
+  title: "TRAILER REF.",
   description: "국내/해외 영화·드라마 예고편을 모아보는 레퍼런스 사이트",
 };
 
