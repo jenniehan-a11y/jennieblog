@@ -1,7 +1,7 @@
 import { Trailer, ContentType } from '@/types/trailer';
 import { MOVIE_GENRES, TV_GENRE_MAP } from '@/lib/data/genres';
 import { getRegion } from '@/lib/data/countries';
-import { fetchYouTubeTrailers, getAgeRestrictedIds } from './youtube';
+import { fetchYouTubeTrailers, getVideoMetadata } from './youtube';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
@@ -550,15 +550,26 @@ async function getAllWorkVideos(tmdbId: number, isTv: boolean): Promise<TMDBVide
   }
 }
 
-// 연령 제한 트레일러를 같은 작품의 비제한 대체본으로 교체. 대체본이 없으면 제외.
-async function replaceAgeRestrictedTrailers(trailers: Trailer[]): Promise<Trailer[]> {
-  const restricted = await getAgeRestrictedIds(trailers.map((t) => t.youtubeId));
-  if (restricted.size === 0) return trailers;
+// 트레일러가 사용 가능한지 — 가로형이고 연령 제한 아닐 때만 OK
+function isUsable(meta: { ageRestricted: boolean; isLandscape: boolean } | undefined): boolean {
+  // 메타 없으면 (API 실패 등) 보수적으로 통과
+  if (!meta) return true;
+  return !meta.ageRestricted && meta.isLandscape;
+}
+
+// 연령 제한 또는 세로형 트레일러를 TMDB의 가로형 비제한 대체본으로 교체.
+// 대체본이 없으면 목록에서 제외.
+async function replaceUnusableTrailers(trailers: Trailer[]): Promise<Trailer[]> {
+  const metaMap = await getVideoMetadata(trailers.map((t) => t.youtubeId));
+  const needsReplacement = (t: Trailer) => !isUsable(metaMap.get(t.youtubeId));
+
+  const anyBad = trailers.some(needsReplacement);
+  if (!anyBad) return trailers;
 
   const candidatesByTrailer = new Map<string, string[]>();
   await Promise.all(
     trailers
-      .filter((t) => restricted.has(t.youtubeId) && t.tmdbId)
+      .filter((t) => needsReplacement(t) && t.tmdbId)
       .map(async (t) => {
         const primaryIsTv = t.contentType !== 'movie';
         let videos = await getAllWorkVideos(t.tmdbId!, primaryIsTv);
@@ -581,16 +592,16 @@ async function replaceAgeRestrictedTrailers(trailers: Trailer[]): Promise<Traile
   );
 
   const allCandidates = [...new Set([...candidatesByTrailer.values()].flat())];
-  const restrictedCandidates = await getAgeRestrictedIds(allCandidates);
+  const candidateMeta = await getVideoMetadata(allCandidates);
 
   const result: Trailer[] = [];
   for (const t of trailers) {
-    if (!restricted.has(t.youtubeId)) {
+    if (!needsReplacement(t)) {
       result.push(t);
       continue;
     }
     const alts = candidatesByTrailer.get(t.id) || [];
-    const safe = alts.find((id) => !restrictedCandidates.has(id));
+    const safe = alts.find((id) => isUsable(candidateMeta.get(id)));
     if (safe) {
       result.push({
         ...t,
@@ -699,8 +710,8 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     return true;
   });
 
-  // 연령 제한 트레일러는 TMDB 대체본으로 교체 (없으면 제외)
-  const safe = await replaceAgeRestrictedTrailers(unique);
+  // 연령 제한/세로형 트레일러는 TMDB 가로형 대체본으로 교체 (없으면 제외)
+  const safe = await replaceUnusableTrailers(unique);
 
   // 최신순 정렬
   safe.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());

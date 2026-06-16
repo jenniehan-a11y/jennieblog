@@ -203,21 +203,33 @@ interface YouTubeVideoDetails {
       ytRating?: string;
     };
   };
+  player?: {
+    embedWidth?: number | string;
+    embedHeight?: number | string;
+  };
 }
 
-// 연령 제한된 YouTube 영상 ID 목록 반환 (임베드 재생 불가)
-export async function getAgeRestrictedIds(youtubeIds: string[]): Promise<Set<string>> {
-  if (!YOUTUBE_API_KEY || youtubeIds.length === 0) return new Set();
+export interface VideoMetadata {
+  ageRestricted: boolean;
+  isLandscape: boolean;
+}
 
-  const restricted = new Set<string>();
+// YouTube videos.list 배치 조회로 연령 제한 여부 및 가로/세로 비율 판별
+export async function getVideoMetadata(
+  youtubeIds: string[]
+): Promise<Map<string, VideoMetadata>> {
+  const result = new Map<string, VideoMetadata>();
+  if (!YOUTUBE_API_KEY || youtubeIds.length === 0) return result;
+
   const unique = Array.from(new Set(youtubeIds));
 
   for (let i = 0; i < unique.length; i += 50) {
     const batch = unique.slice(i, i + 50);
     try {
       const params = new URLSearchParams({
-        part: 'contentDetails',
+        part: 'contentDetails,player',
         id: batch.join(','),
+        maxHeight: '720',
         key: YOUTUBE_API_KEY,
       });
       const res = await fetch(`${YOUTUBE_BASE}/videos?${params}`, {
@@ -226,14 +238,18 @@ export async function getAgeRestrictedIds(youtubeIds: string[]): Promise<Set<str
       if (!res.ok) continue;
       const data = (await res.json()) as { items?: YouTubeVideoDetails[] };
       for (const item of data.items || []) {
-        if (item.contentDetails?.contentRating?.ytRating === 'ytAgeRestricted') {
-          restricted.add(item.id);
-        }
+        const ageRestricted =
+          item.contentDetails?.contentRating?.ytRating === 'ytAgeRestricted';
+        const w = Number(item.player?.embedWidth) || 0;
+        const h = Number(item.player?.embedHeight) || 0;
+        // 비율 정보 없으면 가로형으로 간주 (보수적). 16:9 (1.78) 근처 또는 그 이상만 landscape.
+        const isLandscape = w === 0 || h === 0 ? true : w / h >= 1.5;
+        result.set(item.id, { ageRestricted, isLandscape });
       }
     } catch {
-      // 배치 실패 시 안전하게 통과 (제한 미적용)
+      // 배치 실패 시 결과 미포함 (호출자 측에서 안전한 디폴트 적용)
     }
   }
 
-  return restricted;
+  return result;
 }
