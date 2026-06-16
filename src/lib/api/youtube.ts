@@ -195,3 +195,45 @@ export async function fetchYouTubeTrailers(): Promise<Trailer[]> {
     return true;
   });
 }
+
+interface YouTubeVideoDetails {
+  id: string;
+  contentDetails?: {
+    contentRating?: {
+      ytRating?: string;
+    };
+  };
+}
+
+// 연령 제한된 YouTube 영상 ID 목록 반환 (임베드 재생 불가)
+export async function getAgeRestrictedIds(youtubeIds: string[]): Promise<Set<string>> {
+  if (!YOUTUBE_API_KEY || youtubeIds.length === 0) return new Set();
+
+  const restricted = new Set<string>();
+  const unique = Array.from(new Set(youtubeIds));
+
+  for (let i = 0; i < unique.length; i += 50) {
+    const batch = unique.slice(i, i + 50);
+    try {
+      const params = new URLSearchParams({
+        part: 'contentDetails',
+        id: batch.join(','),
+        key: YOUTUBE_API_KEY,
+      });
+      const res = await fetch(`${YOUTUBE_BASE}/videos?${params}`, {
+        next: { revalidate: 21600 },
+      });
+      if (!res.ok) continue;
+      const data = (await res.json()) as { items?: YouTubeVideoDetails[] };
+      for (const item of data.items || []) {
+        if (item.contentDetails?.contentRating?.ytRating === 'ytAgeRestricted') {
+          restricted.add(item.id);
+        }
+      }
+    } catch {
+      // 배치 실패 시 안전하게 통과 (제한 미적용)
+    }
+  }
+
+  return restricted;
+}

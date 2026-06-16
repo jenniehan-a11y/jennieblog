@@ -1,7 +1,7 @@
 import { Trailer, ContentType } from '@/types/trailer';
 import { MOVIE_GENRES, TV_GENRE_MAP } from '@/lib/data/genres';
 import { getRegion } from '@/lib/data/countries';
-import { fetchYouTubeTrailers } from './youtube';
+import { fetchYouTubeTrailers, getAgeRestrictedIds } from './youtube';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
@@ -513,14 +513,14 @@ async function enrichYouTubeGenres(trailers: Trailer[]): Promise<Trailer[]> {
 
         if (movie && !tv) {
           const genres = movie.genre_ids.map((id) => MOVIE_GENRES[id]).filter(Boolean);
-          return { ...trailer, genres };
+          return { ...trailer, genres, tmdbId: movie.id };
         } else if (movie && tv) {
           // 둘 다 있으면 영화 우선
           const genres = movie.genre_ids.map((id) => MOVIE_GENRES[id]).filter(Boolean);
-          return { ...trailer, genres };
+          return { ...trailer, genres, tmdbId: movie.id };
         } else if (tv) {
           const genres = [...new Set(tv.genre_ids.flatMap((id) => TV_GENRE_MAP[id] || []))];
-          return { ...trailer, genres };
+          return { ...trailer, genres, tmdbId: tv.id };
         }
       } catch {
         // 매칭 실패해도 원본 유지
@@ -529,6 +529,78 @@ async function enrichYouTubeGenres(trailers: Trailer[]): Promise<Trailer[]> {
     })
   );
   return enriched;
+}
+
+// 작품의 모든 YouTube 비디오 (영문 + 한국어 로케일 합본)
+async function getAllWorkVideos(tmdbId: number, isTv: boolean): Promise<TMDBVideo[]> {
+  try {
+    const path = isTv ? `/tv/${tmdbId}/videos` : `/movie/${tmdbId}/videos`;
+    const [en, ko] = await Promise.all([
+      tmdbFetch<{ results: TMDBVideo[] }>(path, { language: 'en-US' }),
+      tmdbFetch<{ results: TMDBVideo[] }>(path, { language: 'ko-KR' }),
+    ]);
+    const seen = new Set<string>();
+    return [...en.results, ...ko.results].filter((v) => {
+      if (seen.has(v.key)) return false;
+      seen.add(v.key);
+      return true;
+    });
+  } catch {
+    return [];
+  }
+}
+
+// 연령 제한 트레일러를 같은 작품의 비제한 대체본으로 교체. 대체본이 없으면 제외.
+async function replaceAgeRestrictedTrailers(trailers: Trailer[]): Promise<Trailer[]> {
+  const restricted = await getAgeRestrictedIds(trailers.map((t) => t.youtubeId));
+  if (restricted.size === 0) return trailers;
+
+  const candidatesByTrailer = new Map<string, string[]>();
+  await Promise.all(
+    trailers
+      .filter((t) => restricted.has(t.youtubeId) && t.tmdbId)
+      .map(async (t) => {
+        const primaryIsTv = t.contentType !== 'movie';
+        let videos = await getAllWorkVideos(t.tmdbId!, primaryIsTv);
+        if (videos.length === 0) {
+          // 1차 추측이 틀렸을 가능성 (예: YouTube 채널 트레일러가 movie로 하드코딩됨)
+          videos = await getAllWorkVideos(t.tmdbId!, !primaryIsTv);
+        }
+        const isKorean = t.country === 'KR';
+        const alts = videos
+          .filter((v) => v.site === 'YouTube' && v.type === 'Trailer')
+          .filter((v) => v.key !== t.youtubeId)
+          .filter((v) => isKorean || !/[가-힣]/.test(v.name))
+          .sort(
+            (a, b) =>
+              new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+          )
+          .map((v) => v.key);
+        candidatesByTrailer.set(t.id, alts);
+      })
+  );
+
+  const allCandidates = [...new Set([...candidatesByTrailer.values()].flat())];
+  const restrictedCandidates = await getAgeRestrictedIds(allCandidates);
+
+  const result: Trailer[] = [];
+  for (const t of trailers) {
+    if (!restricted.has(t.youtubeId)) {
+      result.push(t);
+      continue;
+    }
+    const alts = candidatesByTrailer.get(t.id) || [];
+    const safe = alts.find((id) => !restrictedCandidates.has(id));
+    if (safe) {
+      result.push({
+        ...t,
+        youtubeId: safe,
+        thumbnailUrl: `https://img.youtube.com/vi/${safe}/mqdefault.jpg`,
+      });
+    }
+    // 대체본 없으면 제외
+  }
+  return result;
 }
 
 export async function fetchAllTrailers(): Promise<Trailer[]> {
@@ -627,8 +699,11 @@ export async function fetchAllTrailers(): Promise<Trailer[]> {
     return true;
   });
 
-  // 최신순 정렬
-  unique.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  // 연령 제한 트레일러는 TMDB 대체본으로 교체 (없으면 제외)
+  const safe = await replaceAgeRestrictedTrailers(unique);
 
-  return unique;
+  // 최신순 정렬
+  safe.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  return safe;
 }
