@@ -79,7 +79,7 @@ export default function Header({ onFilter, onSearch, onSearchClear }: HeaderProp
           {/* 로고 */}
           <Link href="/" className="text-black font-black text-lg tracking-[-0.04em] uppercase"
             onClick={() => { setMenuOpen(false); setSearchOpen(false); setSearchQuery(''); onFilter?.(null); onSearchClear?.(); }}>
-            TRAILER REF.
+            TRAILER
           </Link>
 
           {/* 검색 아이콘 */}
