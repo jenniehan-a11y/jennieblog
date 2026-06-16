@@ -124,7 +124,7 @@ export default function TrailerExplorer({
 
         {/* Top 10 — 최근 30일 조회수 상위 (전세계 → 한국 순), 필터/검색 없을 때만 */}
         {!filter && !isSearchMode && (top10Intl.length > 0 || top10Korea.length > 0) && (
-          <section className="bg-black/[0.04] pt-14 pb-20 space-y-10">
+          <section className="bg-black/[0.04] pt-14 pb-40 space-y-10">
             {top10Intl.length > 0 && (
               <div>
                 <div className="px-10 lg:px-20 flex items-baseline justify-between mb-5">
@@ -187,7 +187,7 @@ export default function TrailerExplorer({
         )}
 
         {/* 트레일러 그리드 */}
-        <section className="px-10 lg:px-20 mt-28">
+        <section className="px-10 lg:px-20 mt-48">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
               {title}
