@@ -8,6 +8,8 @@ import TrailerModal from './trailer/TrailerModal';
 
 interface TrailerExplorerProps {
   initialTrailers: Trailer[];
+  top10Korea: Trailer[];
+  top10Intl: Trailer[];
 }
 
 const GENRE_LABELS: Record<string, string> = {
@@ -16,7 +18,11 @@ const GENRE_LABELS: Record<string, string> = {
   '판타지': 'Fantasy', '미스터리': 'Mystery', '애니메이션': 'Animation',
 };
 
-export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProps) {
+export default function TrailerExplorer({
+  initialTrailers,
+  top10Korea,
+  top10Intl,
+}: TrailerExplorerProps) {
   const [heroModal, setHeroModal] = useState<Trailer | null>(null);
   const [gridModal, setGridModal] = useState<Trailer | null>(null);
   const [filter, setFilter] = useState<{ genre?: string; region?: string } | null>(null);
@@ -92,7 +98,7 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
     <>
       <Header onFilter={handleFilter} onSearch={handleSearch} onSearchClear={handleSearchClear} />
 
-      <div className="pt-10 pb-32 space-y-24">
+      <div className="pt-10 pb-32">
         {/* 히어로: 필터/검색 없을 때만 */}
         {!filter && !isSearchMode && hero && (
           <section>
@@ -116,8 +122,72 @@ export default function TrailerExplorer({ initialTrailers }: TrailerExplorerProp
           </section>
         )}
 
+        {/* Top 10 — 최근 30일 조회수 상위 (전세계 → 한국 순), 필터/검색 없을 때만 */}
+        {!filter && !isSearchMode && (top10Intl.length > 0 || top10Korea.length > 0) && (
+          <section className="bg-black/[0.04] pt-14 pb-14 space-y-10">
+            {top10Intl.length > 0 && (
+              <div>
+                <div className="px-10 lg:px-20 flex items-baseline justify-between mb-5">
+                  <h2 className="text-black text-sm font-black tracking-[-0.02em] uppercase">
+                    International Top 10
+                  </h2>
+                  <span className="text-black/40 text-[10px] font-semibold uppercase tracking-[0.08em]">
+                    Most Viewed · 30 Days
+                  </span>
+                </div>
+                <div className="px-10 lg:px-20 overflow-x-auto pb-2 [scrollbar-width:thin] snap-x snap-mandatory">
+                  <div className="flex gap-4">
+                    {top10Intl.map((t, i) => (
+                      <div
+                        key={t.id}
+                        className="flex-shrink-0 w-[180px] snap-start"
+                      >
+                        <div className="relative">
+                          <div className="absolute top-1.5 left-1.5 z-10 min-w-[22px] h-[22px] px-1.5 flex items-center justify-center bg-white text-black text-[11px] font-black tracking-[-0.02em] rounded">
+                            {i + 1}
+                          </div>
+                          <TrailerCard trailer={t} onPlay={setGridModal} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {top10Korea.length > 0 && (
+              <div>
+                <div className="px-10 lg:px-20 flex items-baseline justify-between mb-5">
+                  <h2 className="text-black text-sm font-black tracking-[-0.02em] uppercase">
+                    Korea Top 10
+                  </h2>
+                  <span className="text-black/40 text-[10px] font-semibold uppercase tracking-[0.08em]">
+                    Most Viewed · 30 Days
+                  </span>
+                </div>
+                <div className="px-10 lg:px-20 overflow-x-auto pb-2 [scrollbar-width:thin] snap-x snap-mandatory">
+                  <div className="flex gap-4">
+                    {top10Korea.map((t, i) => (
+                      <div
+                        key={t.id}
+                        className="flex-shrink-0 w-[180px] snap-start"
+                      >
+                        <div className="relative">
+                          <div className="absolute top-1.5 left-1.5 z-10 min-w-[22px] h-[22px] px-1.5 flex items-center justify-center bg-white text-black text-[11px] font-black tracking-[-0.02em] rounded">
+                            {i + 1}
+                          </div>
+                          <TrailerCard trailer={t} onPlay={setGridModal} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* 트레일러 그리드 */}
-        <section className="px-10 lg:px-20">
+        <section className="px-10 lg:px-20 mt-24">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-black tracking-[-0.04em] uppercase leading-[0.9]">
               {title}

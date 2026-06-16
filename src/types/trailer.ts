@@ -28,4 +28,5 @@ export interface Trailer {
   tmdbId?: number;
   addedAt: string;
   publishedAt: string;
+  viewCount?: number;
 }

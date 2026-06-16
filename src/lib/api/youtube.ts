@@ -207,14 +207,18 @@ interface YouTubeVideoDetails {
     embedWidth?: number | string;
     embedHeight?: number | string;
   };
+  statistics?: {
+    viewCount?: string;
+  };
 }
 
 export interface VideoMetadata {
   ageRestricted: boolean;
   isLandscape: boolean;
+  viewCount: number;
 }
 
-// YouTube videos.list 배치 조회로 연령 제한 여부 및 가로/세로 비율 판별
+// YouTube videos.list 배치 조회로 연령 제한 여부, 가로/세로 비율, 조회수 판별
 export async function getVideoMetadata(
   youtubeIds: string[]
 ): Promise<Map<string, VideoMetadata>> {
@@ -227,7 +231,7 @@ export async function getVideoMetadata(
     const batch = unique.slice(i, i + 50);
     try {
       const params = new URLSearchParams({
-        part: 'contentDetails,player',
+        part: 'contentDetails,player,statistics',
         id: batch.join(','),
         maxHeight: '720',
         key: YOUTUBE_API_KEY,
@@ -244,7 +248,8 @@ export async function getVideoMetadata(
         const h = Number(item.player?.embedHeight) || 0;
         // 비율 정보 없으면 가로형으로 간주 (보수적). 16:9 (1.78) 근처 또는 그 이상만 landscape.
         const isLandscape = w === 0 || h === 0 ? true : w / h >= 1.5;
-        result.set(item.id, { ageRestricted, isLandscape });
+        const viewCount = Number(item.statistics?.viewCount) || 0;
+        result.set(item.id, { ageRestricted, isLandscape, viewCount });
       }
     } catch {
       // 배치 실패 시 결과 미포함 (호출자 측에서 안전한 디폴트 적용)

@@ -597,7 +597,7 @@ async function replaceUnusableTrailers(trailers: Trailer[]): Promise<Trailer[]> 
   const result: Trailer[] = [];
   for (const t of trailers) {
     if (!needsReplacement(t)) {
-      result.push(t);
+      result.push({ ...t, viewCount: metaMap.get(t.youtubeId)?.viewCount });
       continue;
     }
     const alts = candidatesByTrailer.get(t.id) || [];
@@ -607,11 +607,28 @@ async function replaceUnusableTrailers(trailers: Trailer[]): Promise<Trailer[]> 
         ...t,
         youtubeId: safe,
         thumbnailUrl: `https://img.youtube.com/vi/${safe}/mqdefault.jpg`,
+        viewCount: candidateMeta.get(safe)?.viewCount,
       });
     }
     // 대체본 없으면 제외
   }
   return result;
+}
+
+// 최근 N일 발행 + 조회수 기준 상위 10개 (region 필터 옵션)
+export function getTop10ByViews(
+  trailers: Trailer[],
+  days: number = 30,
+  region?: 'domestic' | 'international'
+): Trailer[] {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return trailers
+    .filter(
+      (t) => t.publishedAt && t.viewCount && new Date(t.publishedAt).getTime() >= cutoff
+    )
+    .filter((t) => !region || t.region === region)
+    .sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0))
+    .slice(0, 10);
 }
 
 export async function fetchAllTrailers(): Promise<Trailer[]> {

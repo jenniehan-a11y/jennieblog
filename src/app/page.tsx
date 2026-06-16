@@ -1,16 +1,29 @@
-import { fetchAllTrailers } from '@/lib/api/tmdb';
+import { fetchAllTrailers, getTop10ByViews } from '@/lib/api/tmdb';
 import TrailerExplorer from '@/components/TrailerExplorer';
+import { Trailer } from '@/types/trailer';
 
 export const revalidate = 21600; // 6시간마다 자동 업데이트
 
-export default async function Home() {
-  let trailers: Awaited<ReturnType<typeof fetchAllTrailers>> = [];
-
+async function loadData(): Promise<{
+  trailers: Trailer[];
+  top10Korea: Trailer[];
+  top10Intl: Trailer[];
+}> {
   try {
-    trailers = await fetchAllTrailers();
+    const trailers = await fetchAllTrailers();
+    return {
+      trailers,
+      top10Korea: getTop10ByViews(trailers, 30, 'domestic'),
+      top10Intl: getTop10ByViews(trailers, 30, 'international'),
+    };
   } catch (error) {
     console.error('Failed to fetch trailers:', error);
+    return { trailers: [], top10Korea: [], top10Intl: [] };
   }
+}
+
+export default async function Home() {
+  const { trailers, top10Korea, top10Intl } = await loadData();
 
   return trailers.length === 0 ? (
     <div className="text-center py-32 px-6">
@@ -18,6 +31,10 @@ export default async function Home() {
       <p className="text-black/15 text-sm mt-2">TMDB_API_KEY를 설정해주세요</p>
     </div>
   ) : (
-    <TrailerExplorer initialTrailers={trailers} />
+    <TrailerExplorer
+      initialTrailers={trailers}
+      top10Korea={top10Korea}
+      top10Intl={top10Intl}
+    />
   );
 }
