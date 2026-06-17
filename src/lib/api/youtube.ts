@@ -32,6 +32,11 @@ const CHANNELS = [
   { id: 'UCFZPGgRaOs9j9BNXXQvVawA', name: '스튜디오지니', region: 'domestic' as const },
   { id: 'UCXmRJfZ3atLVLDiO5Ufycvw', name: '스튜디오지니', region: 'domestic' as const },
   { id: 'UCw0LjEsFRJCM0aIUZlYFHBQ', name: 'CJ ENM', region: 'domestic' as const },
+  { id: 'UCiEEF51uRAeZeCo8CJFhGWw', name: 'Netflix Korea', region: 'domestic' as const },
+  { id: 'UCZAxPxS6vghaL2KkP43tlnA', name: 'KoreaFilm', region: 'domestic' as const },
+  { id: 'UCtmgvMzjN859SvSn5QimK8Q', name: 'Paramount Korea', region: 'domestic' as const },
+  { id: 'UCsLHf-l27Rb4CK-i8cmqEEw', name: '플러스엠 엔터테인먼트', region: 'domestic' as const },
+  { id: 'UClhcOuj5GDEmUAfg2R6LkGQ', name: '바이포엠스튜디오', region: 'domestic' as const },
 ];
 
 interface YouTubePlaylistItem {
