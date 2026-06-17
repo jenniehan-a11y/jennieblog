@@ -37,6 +37,9 @@ const CHANNELS = [
   { id: 'UCtmgvMzjN859SvSn5QimK8Q', name: 'Paramount Korea', region: 'domestic' as const },
   { id: 'UCsLHf-l27Rb4CK-i8cmqEEw', name: '플러스엠 엔터테인먼트', region: 'domestic' as const },
   { id: 'UClhcOuj5GDEmUAfg2R6LkGQ', name: '바이포엠스튜디오', region: 'domestic' as const },
+  { id: 'UC8AD5KHdsFzp8qoJvS4YSYg', name: 'Warner Bros. Korea', region: 'domestic' as const },
+  { id: 'UCmtjEZ9fXPph2RiAvStIjPg', name: '20th Century Studios Korea', region: 'domestic' as const },
+  { id: 'UCvvsOdnAQH4fl50DY17eV1A', name: '쇼박스', region: 'domestic' as const },
 ];
 
 interface YouTubePlaylistItem {
