@@ -40,6 +40,13 @@ const CHANNELS = [
   { id: 'UC8AD5KHdsFzp8qoJvS4YSYg', name: 'Warner Bros. Korea', region: 'domestic' as const },
   { id: 'UCmtjEZ9fXPph2RiAvStIjPg', name: '20th Century Studios Korea', region: 'domestic' as const },
   { id: 'UCvvsOdnAQH4fl50DY17eV1A', name: '쇼박스', region: 'domestic' as const },
+  { id: 'UC2-VHbcGqGxNRUv0YIekMkA', name: '잇츠뉴', region: 'domestic' as const },
+  { id: 'UCC2F35lZ0drUeMJOATXde2g', name: '롯데엔터테인먼트', region: 'domestic' as const },
+  { id: 'UC_TOAOug_UNieUj4jzRkB9A', name: 'Universal Korea', region: 'domestic' as const },
+  { id: 'UChpjIaEgwtDZtmWEkzFulSA', name: 'KBS Drama', region: 'domestic' as const },
+  { id: 'UCBAEVMr0li9YYF8IwZHfusw', name: 'MBC Drama', region: 'domestic' as const },
+  { id: 'UCGpdB9133phyel0_s3KMdww', name: 'ENA', region: 'domestic' as const },
+  { id: 'UC1Myj674wRVXB9I4c6Hm5zA', name: 'Apple TV+', region: 'international' as const },
 ];
 
 interface YouTubePlaylistItem {
