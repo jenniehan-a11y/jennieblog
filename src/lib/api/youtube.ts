@@ -47,6 +47,13 @@ const CHANNELS = [
   { id: 'UCBAEVMr0li9YYF8IwZHfusw', name: 'MBC Drama', region: 'domestic' as const },
   { id: 'UCGpdB9133phyel0_s3KMdww', name: 'ENA', region: 'domestic' as const },
   { id: 'UC1Myj674wRVXB9I4c6Hm5zA', name: 'Apple TV+', region: 'international' as const },
+  { id: 'UCOmW_Xf9No-R_sEKZT--iEQ', name: 'Studio Dragon', region: 'domestic' as const },
+  { id: 'UC_y6eSNRFVH6yvV__-RbqbQ', name: 'Studio N', region: 'domestic' as const },
+  { id: 'UCk8I64dalAiQkgAkcQocDcw', name: '에이스토리', region: 'domestic' as const },
+  { id: 'UC6z-zWwycCnwNBWIV_JcwNQ', name: '콘텐츠 지오', region: 'domestic' as const },
+  { id: 'UCRV0Gb4i99Aj9UiqCE8xlvw', name: 'CJ ENM Movie', region: 'domestic' as const },
+  { id: 'UCY2wHBgv2W30w6lqoLxq99g', name: '소니픽쳐스코리아', region: 'domestic' as const },
+  { id: 'UCGJVa0CWAH7sy0TuMXvCYvw', name: 'Drama House', region: 'domestic' as const },
 ];
 
 interface YouTubePlaylistItem {
